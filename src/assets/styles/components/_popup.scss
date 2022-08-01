@@ -1,0 +1,61 @@
+/* Popup */
+
+/* Popup style */
+.popup-box {
+    position: fixed;
+    background: #00000050; 
+    top: 0;  
+    left: 0;  
+    right: 0;  
+    bottom: 0;  
+    margin: auto;; 
+
+    .box {
+      position: absolute;  
+      left: 24%;  
+      right: 10%;  
+      top: 16%;  
+      bottom: 8%;  
+      margin: auto;  
+      border-radius: 10px;
+      background: #191c24;  
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      scrollbar-width: 2px;
+      padding: 20px;
+
+      // $breakpoint-smalllaptop: 992px;
+      $breakpoint-tablet: 768px;
+      @media (max-width: $breakpoint-tablet) {
+        left: 5%;
+        right: 5%;
+      }
+
+      .close-icon {
+        cursor: pointer;
+        position: relative;
+        background-color: #fc424a;
+        color: white;
+        width: 80px;
+        border-radius: 0px;
+        top: 0;
+        left: 90%;
+      }
+
+      p {
+        text-align: center;
+        padding: 8px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 50px;
+        border-radius: 10px;
+        /* background-color: black; */
+    }
+  }
+
+}
+
+
+
+  
