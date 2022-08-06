@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import { createAgent } from '../redux/actions/agent';
-
+import { useHistory } from 'react-router-dom';
 import identificationMethods from '../data/identification-methods'
 import banks from '../data/banks'
 import { generatePassword } from '../helpers/functions';
@@ -25,7 +25,6 @@ import { generatePassword } from '../helpers/functions';
 
 export function AgentForm(props) {
     // initializing neccesary data to add new agents 
-
     const history = useHistory()
     const [formData, setFormData] = useState({
         firstName: "",
