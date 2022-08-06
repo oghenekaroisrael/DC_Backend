@@ -1,4 +1,5 @@
 import agentActionTypes from '../types/agent';
+
 import { endpoints, getHeaders } from '../helpers/api';
 
 // export const fetchProfileStart = () => {
@@ -182,6 +183,48 @@ export const createAgent = agent => async (dispatch) => {
     } else {
         dispatch(createAgentFailure("An error occured."));
     }
+}
+
+
+export const fetchAgentsStart = () => {
+    return {
+        type: agentActionTypes.FETCH_AGENTS_START,
+    }
+}
+
+export const fetchAgentsSucess = (payload) => {
+    return {
+        type: agentActionTypes.FETCH_AGENTS_SUCCESS,
+        payload,
+    }
+}
+
+export const fetchAgentsFailure = (payload) => {
+    return {
+        type: agentActionTypes.FETCH_AGENTS_FAILURE,
+        payload,
+    }
+}
+
+export const fetchAgents = () => dispatch => {
+    dispatch(fetchAgentsStart());
+    fetch(endpoints.API_HOME + '/providers/agents', {
+        headers: getHeaders(true)
+    })
+        .then (res => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                dispatch(fetchAgentsFailure("Oops. An Error Occured"))
+            }
+        })
+        .then (data => {
+            dispatch(fetchAgentsSucess(data.payload));
+        }).catch(err => {
+            dispatch(fetchAgentsFailure("Oops. An Error Occured"))
+        })
+
+
 }
 
 // export const deleteFlatRate = (id) => dispatch => {

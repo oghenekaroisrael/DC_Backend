@@ -80,6 +80,29 @@ const agentsReducer = (state = initialState, action) => {
             }
         }
 
+        case agentActionTypes.FETCH_AGENTS_START: {
+            return {
+                ...state,
+                fetchingAgents: true,
+                fetchAgentsError: null,
+            }
+        }
+        case agentActionTypes.FETCH_AGENTS_SUCCESS: {
+            return {
+                ...state,
+                fetchingAgents: false,
+                fetchAgentsError: null,
+                assets: action.payload,
+            }
+        }
+        case agentActionTypes.FETCH_AGENTS_FAILURE: {
+            return {
+                ...state,
+                fetchingAgents: false,
+                fetchAgentsError: action.payload,
+            }
+        }
+
         // case profileActionTypes.UPDATE_FLAT_RATE_START: {
         //     return {
         //         ...state,
