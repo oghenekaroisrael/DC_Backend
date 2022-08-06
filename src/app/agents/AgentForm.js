@@ -59,11 +59,12 @@ export function AgentForm(props) {
         console.log(formData)
         const criteria = Object.values(formData).filter(x => !x).length === 0;
         if (criteria) {
+            const pwd = generatePassword();
             props.registerAgent({
                 ...formData,
-                password: generatePassword()
+                password: pwd
             });
-            history.push("/assets")
+            history.push(`/agents?pwd=${pwd}`);
             console.log(formData);
         } else {
             console.log("nah")
