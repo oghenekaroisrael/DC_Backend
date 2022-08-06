@@ -25,6 +25,8 @@ import { generatePassword } from '../helpers/functions';
 
 export function AgentForm(props) {
     // initializing neccesary data to add new agents 
+
+    const history = useHistory()
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
