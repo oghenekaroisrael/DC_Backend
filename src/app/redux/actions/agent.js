@@ -164,7 +164,7 @@ export const createAgentFailure = (payload) => {
 
 export const createAgent = agent => async (dispatch) => {
     dispatch(createAgentStart())
-    const res = await fetch(endpoints.API_HOME + '/provider/agents', {
+    const res = await fetch(endpoints.API_HOME + '/providers/agents', {
         method: "POST",
         headers: getHeaders(true),
         body: JSON.stringify(agent)
