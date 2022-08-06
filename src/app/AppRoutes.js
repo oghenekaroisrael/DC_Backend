@@ -39,7 +39,7 @@ class AppRoutes extends Component {
           <PrivateRoute exact path="/profile" component={Profile} />
           <PrivateRoute exact path="/rates" component={Rates} />
           <PrivateRoute exact path="/create-rate" component={RatesForm} />
-          {/* <PrivateRoute exact path="/agents" component={Agents} /> */}
+          <PrivateRoute exact path="/agents" component={Agents} />
           <PrivateRoute exact path="/create-agent" component={AgentForm} />
           <PrivateRoute exact path="/assets" component={Assets} />
           <PrivateRoute exact path="/add-assets" component={AssetForm} />
