@@ -92,7 +92,7 @@ const agentsReducer = (state = initialState, action) => {
                 ...state,
                 fetchingAgents: false,
                 fetchAgentsError: null,
-                assets: action.payload,
+                agents: action.payload,
             }
         }
         case agentActionTypes.FETCH_AGENTS_FAILURE: {
