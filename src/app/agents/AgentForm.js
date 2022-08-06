@@ -30,15 +30,15 @@ export function AgentForm(props) {
         lastName: "",
         email: "",
         birth_date: "",
-        address_1: "",
-        phone_number: "",
+        address: "",
+        phoneNumber: "",
         city: "",
         state: "",
-        post_code: "",
+        zipCode: "",
         country: "",
-        bank_name: "",
-        account_name: "",
-        account_number: "",
+        bankName: "",
+        accountName: "",
+        accountNumber: "",
         id_method: identificationMethods[2].value,
         id_image_url: "",
         issue_date: "",
@@ -106,7 +106,7 @@ export function AgentForm(props) {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label">Phone Number</label>
                                         <div className="col-sm-9">
-                                            <Form.Control name="phone_number" value={formData.phone_number} onChange={handleInput} type="tel" placeholder="+234" />
+                                            <Form.Control name="phoneNumber" value={formData.phoneNumber} onChange={handleInput} type="tel" placeholder="+234" />
                                         </div>
                                     </Form.Group>
                                 </div>
@@ -137,7 +137,7 @@ export function AgentForm(props) {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label">Address 1</label>
                                         <div className="col-sm-9">
-                                            <Form.Control name="address_1" value={formData.address_1} onChange={handleInput} type="text" />
+                                            <Form.Control name="address" value={formData.address} onChange={handleInput} type="text" />
                                         </div>
                                     </Form.Group>
                                 </div>
@@ -163,7 +163,7 @@ export function AgentForm(props) {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label">Postcode</label>
                                         <div className="col-sm-9">
-                                            <Form.Control name="post_code" value={formData.post_code} onChange={handleInput} type="text" />
+                                            <Form.Control name="zipCode" value={formData.zipCode} onChange={handleInput} type="text" />
                                         </div>
                                     </Form.Group>
                                 </div>
@@ -229,7 +229,7 @@ export function AgentForm(props) {
                             <form className="forms-sample">
                                 <Form.Group>
                                     <label htmlFor="selectBank">Bank Name</label>
-                                    <select key={`bank-name-${formData.bank_name}`} name="bank_name" value={formData.bank_name} onChange={handleInput} className="form-control" id="selectBank">
+                                    <select key={`bank-name-${formData.bank_name}`} name="bankName" value={formData.bankName} onChange={handleInput} className="form-control" id="selectBank">
                                         {/* <option value="">None</option> */}
                                         {banks.map((option) => (
                                             <option key={`bank-name-${option.value}`} value={option.value}>{option.label}</option>
@@ -238,11 +238,11 @@ export function AgentForm(props) {
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Name</label>
-                                    <Form.Control name="account_name" value={formData.account_name} onChange={handleInput} type="text" />
+                                    <Form.Control name="accountName" value={formData.accountName} onChange={handleInput} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Number</label>
-                                    <Form.Control name="account_number" value={formData.account_number} onChange={handleInput} type="text" />
+                                    <Form.Control name="accountNumber" value={formData.accountNumber} onChange={handleInput} type="text" />
                                 </Form.Group>
                                 <br />
                                 <div>
