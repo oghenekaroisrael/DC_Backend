@@ -14,7 +14,7 @@ const RatesForm = lazy(() => import('./rates/RatesForm'));
 const Assets = lazy(() => import('./assets/Assets'))
 const AssetForm = lazy(() => import('./assets/AssetForm'))
 
-// const Agents = lazy(() => import('./agents/Agents'));
+const Agents = lazy(() => import('./agents/Agents'));
 const AgentForm = lazy(() => import('./agents/AgentForm'));
 
 const Login = lazy(() => import('./user-pages/Login'));
