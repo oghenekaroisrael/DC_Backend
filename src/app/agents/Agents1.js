@@ -9,7 +9,7 @@ import { fetchAgents } from '../redux/actions/agent';
 // This javascript file contains code to show the list of available agents in the system using a table 
 // view the manage agents menu page for more information 
 
-export class Agents extends Component {
+export class Agents1 extends Component {
 
     constructor(props) {
         super(props);
@@ -166,4 +166,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Agents);
+export default connect(mapStateToProps, mapDispatchToProps)(Agents1);

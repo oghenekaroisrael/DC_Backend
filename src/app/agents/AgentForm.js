@@ -62,6 +62,7 @@ export function AgentForm(props) {
                 ...formData,
                 password: generatePassword()
             });
+            history.push("/assets")
             console.log(formData);
         } else {
             console.log("nah")

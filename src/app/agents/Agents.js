@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchAgents } from '../redux/actions/agents';
+import { fetchAgents } from '../redux/actions/agent';
 
 
 
