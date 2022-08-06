@@ -85,7 +85,7 @@ export const clearAuthErrorMessage = () => {
 // Methods
 export const loginRequest = (credentials) => dispatch => {
     dispatch(loginStarted());
-    fetch(endpoints.API_HOME + '/users/login', {
+    fetch(endpoints.API_HOME + '/users/login?role=provider', {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify(credentials)
