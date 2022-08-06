@@ -26,7 +26,8 @@ import { generatePassword } from '../helpers/functions';
 export function AgentForm(props) {
     // initializing neccesary data to add new agents 
     const [formData, setFormData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         birth_date: "",
         address_1: "",
@@ -87,9 +88,17 @@ export function AgentForm(props) {
                             <div className="row">
                                 <div className="col-md-6">
                                     <Form.Group className="row">
-                                        <label className="col-sm-3 col-form-label">Full Name</label>
+                                        <label className="col-sm-3 col-form-label">Frist Name</label>
                                         <div className="col-sm-9">
-                                            <Form.Control name="name" value={formData.name} onChange={handleInput} type="text" />
+                                            <Form.Control name="firstName" value={formData.firstName} onChange={handleInput} type="text" />
+                                        </div>
+                                    </Form.Group>
+                                </div>
+                                <div className="col-md-6">
+                                    <Form.Group className="row">
+                                        <label className="col-sm-3 col-form-label">Last Name</label>
+                                        <div className="col-sm-9">
+                                            <Form.Control name="lastName" value={formData.lastName} onChange={handleInput} type="text" />
                                         </div>
                                     </Form.Group>
                                 </div>
