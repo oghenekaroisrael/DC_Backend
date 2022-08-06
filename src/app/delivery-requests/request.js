@@ -11,7 +11,7 @@ export function Request() {
     const [requests, setrequests] = useState([]);
 
     useEffect(() => {
-        fetch(endpoints.API_HOME + '/deliveries/me', {
+        fetch(endpoints.API_HOME + '/deliveries/', {
             headers: getHeaders(true)
         })
             .then(res => {
