@@ -40,7 +40,7 @@ export function Agents() {
                                         {agents.map((agent,index) => (
                                             <tr>
                                                 <td>{index+1}</td>
-                                                <td>{agent.lastName && ' ' && agent.firstName}</td>
+                                                <td>{agent.lastName+' '+agent.firstName}</td>
                                                 <td>{agent.state}</td>
                                                 <td>{agent.address}</td>
                                                 <td>{agent.phoneNumber}</td>
@@ -49,7 +49,7 @@ export function Agents() {
                                                         display: 'flex',
                                                         justifyContent: 'space-evenly'
                                                     }}>
-                                                    <button className="btn btn-primary btn-lg "> VIEW </button>
+                                                    <button className="btn btn-primary btn-lg"> VIEW </button>
                                                     <button className="btn btn-danger btn-icon-text">
                                                         <i className="mdi mdi-delete"></i>
                                                     </button>
