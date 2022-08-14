@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchAgents } from '../redux/actions/agent';
+import { fetchAgents, deleteAgent } from '../redux/actions/agent';
 
 
 
@@ -12,6 +12,10 @@ export function Agents() {
     useEffect(() => {
         dispatch(fetchAgents());
     }, []);
+
+    const handleDeleteAgent = (id) => {
+        dispatch(deleteAgent(id));
+    }
 
     return (
         <div>
@@ -50,7 +54,8 @@ export function Agents() {
                                                         justifyContent: 'space-evenly'
                                                     }}>
                                                     <button className="btn btn-primary btn-lg"> VIEW </button>
-                                                    <button className="btn btn-danger btn-icon-text">
+                                                    <button className="btn btn-danger btn-icon-text"
+                                                    onClick={() => handleDeleteAgent(agent.id)}>
                                                         <i className="mdi mdi-delete"></i>
                                                     </button>
                                                 </td>

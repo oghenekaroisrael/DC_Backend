@@ -9,7 +9,7 @@ export class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      companyName: "",
       email: "",
       password: "",
       phoneNumber: "",
@@ -30,7 +30,7 @@ export class Register extends Component {
   };
 
   handleSignup = () => {
-    if (this.state.name && this.state.email && this.state.password && this.state.phoneNumber) {
+    if (this.state.companyName && this.state.email && this.state.password && this.state.phoneNumber) {
       this.props.registerUser(this.state);
     } else {
       alert("Invalid credentials.")
@@ -61,7 +61,7 @@ export class Register extends Component {
                 <h6 className="font-weight-light">Signing up is easy. It only takes a few steps</h6>
                 <form className="pt-3">
                   <div className="form-group">
-                    <input onChange={this.handleInput} name="name" value={this.state.name} type="text" className="form-control form-control-lg" id="usernameInput" placeholder="Company Name" />
+                    <input onChange={this.handleInput} name="companyName" value={this.state.companyName} type="text" className="form-control form-control-lg" id="usernameInput" placeholder="Company Name" />
                   </div>
                   <div className="form-group">
                     <input onChange={this.handleInput} name="email" value={this.state.email} type="email" className="form-control form-control-lg" id="emailInput" placeholder="Company Email" />

@@ -45,7 +45,7 @@ class AppRoutes extends Component {
           <PrivateRoute exact path="/add-assets" component={AssetForm} />
           <PrivateRoute exact path="/customer-reviews" component={Reviews} />
           <PrivateRoute exact path="/requests" component={Request} />
-          <PrivateRoute exact path="/request-details" component={RequestForm} />
+          <PrivateRoute exact path="/request-details/:id" component={RequestForm} />
           <PrivateRoute exact path="/payments" component={Payment} />
           <PrivateRoute exact path="/progress" component={Progress} />
           

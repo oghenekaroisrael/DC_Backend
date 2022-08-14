@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { endpoints, getHeaders } from "../redux/helpers/api"
-
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 
@@ -75,7 +75,10 @@ export function Request() {
                                                     display: 'flex',
                                                     justifyContent: 'space-evenly'
                                                 }}>
-                                                    <button className="btn btn-primary btn-lg"> VIEW </button>
+                                                    <Link className="btn btn-primary btn-lg" to={`/request-details/${request.id}`}>
+                                                        VIEW
+                                                    </Link>
+                                                    {/* <button className="btn btn-primary btn-lg"> VIEW </button> */}
                                                     <button className="btn btn-danger btn-icon-text">
                                                         <i className="mdi mdi-delete"></i>
                                                     </button>

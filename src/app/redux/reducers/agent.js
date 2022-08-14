@@ -6,6 +6,8 @@ const initialState = {
     fetchAgentsError: null,
     creatingAgent: null,
     createAgentError: null,
+    deletingAgent: null,
+    deleteAgentError: null,
 };
 
 const agentsReducer = (state = initialState, action) => {
@@ -100,6 +102,30 @@ const agentsReducer = (state = initialState, action) => {
                 ...state,
                 fetchingAgents: false,
                 fetchAgentsError: action.payload,
+            }
+        }
+
+        case agentActionTypes.DELETE_AGENT_START: {
+            return {
+                ...state,
+                deletingAgent: true,
+                deleteAgentError: null,
+            }
+        }
+        case agentActionTypes.DELETE_AGENT_SUCCESS: {
+            const newAgents = state.agents.filter(agent => agent.id !== action.payload)
+            return {
+                ...state,
+                agents: newAgents,
+                deletingAgent: false,
+                deleteAgentError: null,
+            }
+        }
+        case agentActionTypes.DELETE_AGENT_FAILURE: {
+            return {
+                ...state,
+                deletingAgent: false,
+                deleteAgentError: action.payload,
             }
         }
 

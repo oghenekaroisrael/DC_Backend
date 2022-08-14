@@ -102,6 +102,26 @@ export const createAgentFailure = (payload) => {
     }
 }
 
+export const deleteAgentStart = () => {
+    return {
+        type: agentActionTypes.DELETE_AGENT_START,
+    };
+}
+
+export const deleteAgentSuccess = (payload) => {
+    return {
+        type: agentActionTypes.DELETE_AGENT_SUCCESS,
+        payload,
+    };
+}
+
+export const deleteAgentFailure = (payload) => {
+    return {
+        type: agentActionTypes.DELETE_AGENT_FAILURE,
+        payload
+    }
+}
+
 // export const fetchFlatRatesStart = () => {
 //     return {
 //         type: agentsActionTypes.FETCH_FLAT_RATES_START,
@@ -225,6 +245,26 @@ export const fetchAgents = () => dispatch => {
         })
 
 
+}
+
+export const deleteAgent = (id) => dispatch => {
+    dispatch(deleteAgentStart());
+    fetch(endpoints.API_HOME + `/providers/agents/${id}`, {
+        method: "DELETE",
+        headers: getHeaders(true),
+    })
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                dispatch(deleteAgentFailure("Oops. An error occured."));
+            }
+        })
+        .then(data => {
+            dispatch(deleteAgentSuccess(id));
+        }).catch(err => {
+            console.error(err.message);
+        });
 }
 
 // export const deleteFlatRate = (id) => dispatch => {
