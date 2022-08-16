@@ -1,12 +1,40 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import moment from 'moment';
+import { fetchDeliveries } from '../redux/actions/delivery';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-// This is the first page you see when you run "npm start". This is the Dashboard.
-// It contains every neccessary information required of the provider
+export const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { delivery } = useSelector(state => state.deliveryReducer);
+  const [completed, setcompleted] = useState(0);
+  const [processing, setprocessing] = useState(0);
+  const [started, setstarted] = useState(0);
+  const [revenue, setrevenue] = useState(0);
 
-export class Dashboard extends Component {
+  useEffect(() => {
+    dispatch(fetchDeliveries());
+    delivery.map(item=> {
+      setrevenue(revenue+parseInt(item.cost));
+      if (item.status == "processing"){
+          setprocessing(processing+1);
+      }else if (item.status == "started"){
+        setstarted(started+1);
+      }else if (item.status == "completed"){
+        setcompleted(completed+1);
+    }
+    })
+  }, []);
 
-  data = {
+  const formatAMPM = (str) => {
+        if (!str) return '';
+        var date = new Date(str);
+        var fullDate = moment(date).format("MM/DD/YYYY");
+        return fullDate 
+  };
+
+  const data = {
     labels: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
       "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
     ],
@@ -34,7 +62,7 @@ export class Dashboard extends Component {
     }]
   };
 
-  options = {
+  const options = {
     scales: {
       yAxes: [{
         ticks: {
@@ -60,9 +88,9 @@ export class Dashboard extends Component {
     }
   }
 
-  doughnutPieData = {
+  const doughnutPieData = {
     datasets: [{
-      data: [500, 20, 100],
+      data: [completed,started,processing],
       backgroundColor: [
         'rgba(54, 162, 235, 0.5)',
         'rgba(255, 99, 132, 0.5)',
@@ -77,13 +105,13 @@ export class Dashboard extends Component {
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
     labels: [
-      'Success',
-      'Failed',
-      'Undecided'
+      'Completed',
+      'Started',
+      'Processing'
     ]
   };
 
-  doughnutPieOptions = {
+  const doughnutPieOptions = {
     responsive: true,
     animation: {
       animateScale: true,
@@ -91,10 +119,10 @@ export class Dashboard extends Component {
     }
   };
 
-  toggleProBanner() {
+  const toggleProBanner = () => {
     document.querySelector('.proBanner').classList.toggle("hide");
-  }
-  render() {
+  };
+
     return (
       <div>
         <div className="row">
@@ -125,7 +153,7 @@ export class Dashboard extends Component {
                 <div className="row">
                   <div className="col-8 col-sm-12 col-xl-8 my-auto">
                     <div className="d-flex d-sm-block d-md-flex align-items-center">
-                      <h2 className="mb-0">₦0.00</h2>
+                      <h2 className="mb-0">₦{revenue}</h2>
                       <p className="text-success ml-2 mb-0 font-weight-medium">0%</p>
                     </div>
                     <h6 className="text-muted font-weight-normal">0% Since you joined</h6>
@@ -182,7 +210,7 @@ export class Dashboard extends Component {
               <div className="card-body">
                 <h4 className="card-title">Active Deliveries</h4>
                 <p className="card-description">
-                  Monitor your deliveries
+                  Monitor your delivery
                 </p>
                 <div className="table-responsive">
                   <table className="table table-bordered">
@@ -197,10 +225,30 @@ export class Dashboard extends Component {
                       </tr>
                     </thead>
                     <tbody>
-
+                      {delivery.map((item)=> (
+                        <tr>
+                        <td>{formatAMPM(item.createdAt)}</td>
+                        <td>{item.pickupArea}</td>
+                        <td>{item.dropoffArea}</td>
+                        <td>{item.size}</td>
+                        <td>{item.status}</td>
+                        <td style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-evenly'
+                                                }}>
+                                                    <Link className="btn btn-primary btn-lg" to={`/request-details/${item.id}`}>
+                                                        VIEW
+                                                    </Link>
+                                                    {/* <button className="btn btn-primary btn-lg"> VIEW </button> */}
+                                                    <button className="btn btn-danger btn-icon-text">
+                                                        <i className="mdi mdi-delete"></i>
+                                                    </button>
+                                                </td>
+                      </tr>
+                      ))}
                     </tbody>
                   </table>
-                  <p className="mt-5 text-center text-muted">There are currently no active deliveries</p>
+                  <p className="mt-5 text-center text-muted">There are currently no active delivery</p>
                 </div>
               </div>
             </div>
@@ -211,7 +259,7 @@ export class Dashboard extends Component {
             <div className="card">
               <div className="card-body">
                 <h4 className="card-title">Your activity</h4>
-                <Bar data={this.data} options={this.options} />
+                <Bar data={data} options={options} />
               </div>
             </div>
           </div>
@@ -219,14 +267,14 @@ export class Dashboard extends Component {
             <div className="card">
               <div className="card-body">
                 <h4 className="card-title">Performance Breakdown</h4>
-                <Doughnut data={this.doughnutPieData} options={this.doughnutPieOptions} />
+                <Doughnut data={doughnutPieData} options={doughnutPieOptions} />
               </div>
             </div>
           </div>
         </div>
 
         
-        {/*       
+{/*               
         <div className="row">
           <div className="col-12">
             <div className="card">
@@ -320,6 +368,5 @@ export class Dashboard extends Component {
       </div>
     );
   }
-}
 
 export default Dashboard;

@@ -5,6 +5,7 @@ import authReducer from './auth';
 import profileReducer from './profile';
 import agentReducer from './agent';
 import assetReducer from './asset';
+import deliveryReducer from './delivery';
 
 import errorReducer from './error.reducers';
 import redirectReducer from './redirect.reducers';
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
     assetReducer,
     profileReducer,
     agentReducer,
+    deliveryReducer,
     errorReducer,
     redirectReducer,
     preferencesReducer

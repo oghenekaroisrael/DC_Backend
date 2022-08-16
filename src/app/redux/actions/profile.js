@@ -225,7 +225,7 @@ export const updateFare = (rate) => dispatch => {
 
 export const fetchProfile = () => dispatch => {
     dispatch(fetchProfileStart())
-    fetch(endpoints.API_HOME + '/provider/me', {
+    fetch(endpoints.API_HOME + '/providers/', {
         headers: getHeaders(true),
     })
         .then(res => {
@@ -245,7 +245,7 @@ export const fetchProfile = () => dispatch => {
 
 export const updateCompanyDetails = (data) => dispatch => {
     dispatch(updateCompanyDetailsStart());
-    fetch(endpoints.API_HOME + `/provider/me`, {
+    fetch(endpoints.API_HOME + `/providers/`, {
         method: "PATCH",
         headers: getHeaders(true),
         body: JSON.stringify(data)

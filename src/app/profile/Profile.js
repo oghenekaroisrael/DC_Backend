@@ -6,6 +6,7 @@ import { fetchProfile, updateCompanyDetails, updateManagerDetails } from '../red
 
 import identificationMethods from '../data/identification-methods'
 import banks from '../data/banks'
+import { endpoints, getHeaders } from '../redux/helpers/api';
 
 function formatDate(input) {
     if (!input){
@@ -17,20 +18,84 @@ function formatDate(input) {
 }
 
 export function Profile(props) {
+    const key = 'sk_test_f0ceeebbc0541de58d6bf05fe0959da518520043';
 
     const [companyDetails, setCompanyDetails] = useState({});
 
     const [managerDetails, setManagerDetails] = useState();
 
+    const [banks, setbanks] = useState([]);
+
+    const [currentBankDetail, setCurrentBankDetail] = useState({});
+
+    const [bankdetails, setbankdetails] = useState({
+        "business_name": "",
+        "bank_code": "",
+        "account_number": "",
+        "percentage_charge": 0.2
+    });
+    
+
     useEffect(() => {
         props.fetchProfile();
-
-        // eslint-disable-next-line
+        fetch('https://api.paystack.co/bank?country=nigeria')
+            .then(res => {
+                if (res.status === 200) {
+                    return res.json();
+                } else {
+                    alert("Oops. An Error Occured")
+                }
+            })
+            .then(data => {
+                setbanks(data.data);
+        });
+        fetch(endpoints.API_HOME + '/providers/bank/details', {
+            headers: getHeaders(true),
+        }).then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                alert("Oops. An Error Occured");
+            }
+        }).then(data => {
+            console.log(data.payload.subaccount_code);
+            fetch(`https://api.paystack.co/subaccount/${data.payload.subaccount_code}`,{
+                headers: {
+                    Authorization: `Bearer ${key}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                if (res.status === 200) {
+                    return res.json();
+                } else {
+                    alert("Oops. An Error Occured")
+                }
+            })
+            .then(data => {
+                setCurrentBankDetail({
+                    subaccount_code: data.data.subaccount_code,
+                    business_name: data.data.business_name,
+                    settlement_bank: data.data.settlement_bank,
+                    account_number: data.data.account_number,
+                    settlement_schedule: data.data.settlement_schedule,
+                });
+        });
+        }).catch(err => {
+            alert("Oops. An Error Occured");
+        });
     }, []);
 
     const handleInputCompany = (e) => {
         setCompanyDetails({
             ...companyDetails,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleInputBankDetails = (e) => {
+        setbankdetails({
+            ...bankdetails,
             [e.target.name]: e.target.value
         })
     }
@@ -47,6 +112,41 @@ export function Profile(props) {
             props.updateCompanyDetails(companyDetails);
             setCompanyDetails(null)
         }
+    }
+
+    const handleUpdateBankDetails = () => {
+        fetch('https://api.paystack.co/subaccount', {
+            method: "POST",
+            body: JSON.stringify(bankdetails),
+            headers: {
+                Authorization: `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            if (res.status === 201) {
+                return res.json()
+
+            } else {
+                alert("Oops. An Error Occured");
+            }
+        }).then(data => {
+            fetch(endpoints.API_HOME + '/providers/bank/details', {
+                method: "POST",
+                headers: getHeaders(true),
+                body: JSON.stringify({subaccount_code: data.data.subaccount_code}),
+            }).then(res => {
+                if (res.status === 200) {
+                    window.location.reload();
+                } else {
+                    alert("Oops. An Error Occured");
+                }
+            }).catch(err => {
+                alert("Oops. An Error Occured");
+            });
+        }).catch(err => {
+            alert("Oops. An Error Occured");
+        });
     }
 
     const handleUpdateManagerDetails = () => {
@@ -430,32 +530,32 @@ export function Profile(props) {
                             <form className="forms-sample">
                                 <Form.Group>
                                     <label htmlFor="selectBank">Bank Name</label>
-                                    <select key={`bank-name-${props.companyDetails.bank_name}`} name="bank_name" defaultValue={props.companyDetails.bank_name} onChange={handleInputCompany} className="form-control" id="selectBank">
+                                    <select key={`bank-name-${props.companyDetails.bank_name}`} name="bank_code" defaultValue={currentBankDetail.settlement_bank} onChange={handleInputBankDetails} className="form-control" id="selectBank">
                                         {/* <option value="">None</option> */}
                                         {banks.map((option) => (
-                                            <option key={`bank-name-${option.value}`} value={option.value}>{option.label}</option>
+                                            <option key={option.slug} value={option.code}>{option.name}</option>
                                         ))}
                                     </select>
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Name</label>
-                                    <Form.Control name="account_name" defaultValue={props.companyDetails.account_name} onChange={handleInputCompany} type="text" />
+                                    <Form.Control name="business_name" defaultValue={currentBankDetail.business_name} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Number</label>
-                                    <Form.Control name="account_number" defaultValue={props.companyDetails.account_number} onChange={handleInputCompany} type="text" />
+                                    <Form.Control name="account_number" defaultValue={currentBankDetail.account_number} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label htmlFor="selectDepositFrequency">Frequency of deposit </label>
-                                    <select name="payment_frequency" defaultValue={props.companyDetails.payment_frequency} onChange={handleInputCompany} className="form-control" id="selectDepositFrequency">
+                                    <select name="settlement_schedule" defaultValue={currentBankDetail.settlement_schedule} onChange={handleInputBankDetails} className="form-control" id="selectDepositFrequency">
                                         {/* <option value="">None</option> */}
-                                        {["daily", "weekly"].map((option) => (
+                                        {["AUTO", "daily", "weekly"].map((option) => (
                                             <option key={`pay-freq-${option}`} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
                                         ))}
                                     </select>
                                 </Form.Group>
                                 <div className="mt-4">
-                                    <button onClick={handleUpdateCompanyDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={handleUpdateBankDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>

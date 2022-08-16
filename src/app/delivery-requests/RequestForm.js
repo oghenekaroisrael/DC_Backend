@@ -165,19 +165,19 @@ export function RequestForm() {
                         <div className='row'>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Priority : </label>
-                                <div className='badge badge-primary'>Standard</div>
+                                <div className={`badge badge-${requests?.priority == 'high' ? 'warning' : 'primary'}`}>{requests?.priority}</div>
                             </div>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Size : </label>
-                                <div className='badge badge-primary'>Small</div>
+                                <div className='badge badge-primary'>{requests?.size}</div>
                             </div>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Item Count : </label>
-                                1
+                                {requests?.itemCount}
                             </div>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Status : </label>
-                                <div className='badge badge-primary'>Processing</div>
+                                <div className={`badge badge-${requests?.status === 'processing' ? 'default' : requests?.status === 'started' ? 'info' : 'success'}`}>{requests?.status}</div>
                             </div>
                         </div>
                         <div className='row'>

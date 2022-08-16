@@ -247,6 +247,43 @@ export const fetchAgents = () => dispatch => {
 
 }
 
+export const assignDefaultAgentStart = () => {
+    return {
+        type: agentActionTypes.ASSIGN_DEFAULT_AGENT_START,
+    }
+}
+
+export const assignDefaultAgentSuccess = (payload) => {
+    return {
+        type: agentActionTypes.ASSIGN_DEFAULT_AGENT_SUCCESS,
+        payload,
+    }
+}
+
+export const assignDefaultAgentFailure = (payload) => {
+    return {
+        type: agentActionTypes.ASSIGN_DEFAULT_AGENT_FAILURE,
+        payload,
+    }
+}
+
+export const assignDefaultAgent = id => async (dispatch) => {
+    dispatch(assignDefaultAgentStart())
+    const res = await fetch(endpoints.API_HOME + `/providers/agents/default/${id}`, {
+        method: "PATCH",
+        headers: getHeaders(true),
+    }).catch(err => {
+        console.error(err.message);
+    });
+    if (res && res.status === 200) {
+        return res.json()
+            .then(data => {
+                dispatch(assignDefaultAgentSuccess(data));
+            })
+    } else {
+        dispatch(assignDefaultAgentFailure("An error occured."));
+    }
+}
 export const deleteAgent = (id) => dispatch => {
     dispatch(deleteAgentStart());
     fetch(endpoints.API_HOME + `/providers/agents/${id}`, {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { fetchAgents, deleteAgent } from '../redux/actions/agent';
+import { Link } from 'react-router-dom';
+import { fetchAgents, deleteAgent, assignDefaultAgent } from '../redux/actions/agent';
 
 
 
@@ -15,6 +15,11 @@ export function Agents() {
 
     const handleDeleteAgent = (id) => {
         dispatch(deleteAgent(id));
+    }
+
+    const handleSetDefaultAgent = (id) => {
+        dispatch(assignDefaultAgent(id));
+        window.location.reload();
     }
 
     return (
@@ -37,7 +42,7 @@ export function Agents() {
                                             <th> Address </th>
                                             <th> Phone Number </th>
                                             <th> Status </th>
-                                            <th>Action</th>
+                                            <th><center>Action</center></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -53,7 +58,13 @@ export function Agents() {
                                                         display: 'flex',
                                                         justifyContent: 'space-evenly'
                                                     }}>
-                                                    <button className="btn btn-primary btn-lg"> VIEW </button>
+                                                        <Link to={`/agent-view/${agent.id}`}>
+                                                            <i className='btn btn-white btn-lg mdi mdi-eye border-white'></i>
+                                                        </Link>
+                                                        <button className={`btn btn-${agent.defaultAgent === true ? 'disabled' : 'info'} btn-icon-text`}
+                                                        onClick={() => handleSetDefaultAgent(agent.id)}>
+                                                            {agent.defaultAgent === true ? 'Default Agent' : 'Make Default'}
+                                                        </button>
                                                     <button className="btn btn-danger btn-icon-text"
                                                     onClick={() => handleDeleteAgent(agent.id)}>
                                                         <i className="mdi mdi-delete"></i>

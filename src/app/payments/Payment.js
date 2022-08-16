@@ -1,7 +1,20 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import { fetchDeliveries } from '../redux/actions/delivery';
 
-export class Payments extends Component {
-    render() {
+export const Payments = () => {
+    const dispatch = useDispatch();
+    const { delivery } = useSelector(state => state.deliveryReducer);
+    useEffect(() => {
+        dispatch(fetchDeliveries());
+      }, []);
+      const formatAMPM = (str) => {
+        if (!str) return '';
+        var date = new Date(str);
+        var fullDate = moment(date).format("MM/DD/YYYY");
+        return fullDate 
+  };
         return (
             <div>
                 <div className="row">
@@ -22,7 +35,13 @@ export class Payments extends Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-
+                                        {delivery.map((item)=> (
+                                                <tr>
+                                                <td>{formatAMPM(item.createdAt)}</td>
+                                                <td>{item.senderName}</td>
+                                                <td>{item.cost}</td>
+                                            </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                     <p className="mt-5 text-center text-muted">There are currently no active payments</p>
@@ -33,7 +52,6 @@ export class Payments extends Component {
                 </div>
             </div>
         )
-    }
 }
 
-export default Payments
+export default Payments;

@@ -8,6 +8,8 @@ const initialState = {
     createAgentError: null,
     deletingAgent: null,
     deleteAgentError: null,
+    assigningAgent: null,
+    assignAgentError: null,
 };
 
 const agentsReducer = (state = initialState, action) => {
@@ -126,6 +128,28 @@ const agentsReducer = (state = initialState, action) => {
                 ...state,
                 deletingAgent: false,
                 deleteAgentError: action.payload,
+            }
+        }
+
+        case agentActionTypes.ASSIGN_DEFAULT_AGENT_START: {
+            return {
+                ...state,
+                assigningAgent: true,
+                assignAgentError: null,
+            }
+        }
+        case agentActionTypes.ASSIGN_DEFAULT_AGENT_SUCCESS: {
+            return {
+                ...state,
+                assigningAgent: false,
+                assignAgentError: null,
+            }
+        }
+        case agentActionTypes.ASSIGN_DEFAULT_AGENT_FAILURE: {
+            return {
+                ...state,
+                assigningAgent: false,
+                assignAgentError: action.payload,
             }
         }
 

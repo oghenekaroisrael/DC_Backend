@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { endpoints, getHeaders } from "../redux/helpers/api"
+import { endpoints, getHeaders } from "../redux/helpers/api";
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 

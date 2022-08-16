@@ -16,6 +16,7 @@ const AssetForm = lazy(() => import('./assets/AssetForm'))
 
 const Agents = lazy(() => import('./agents/Agents'));
 const AgentForm = lazy(() => import('./agents/AgentForm'));
+const AgentView = lazy(() => import('./agents/AgentView'));
 
 const Login = lazy(() => import('./user-pages/Login'));
 const Register = lazy(() => import('./user-pages/Register'));
@@ -41,6 +42,7 @@ class AppRoutes extends Component {
           <PrivateRoute exact path="/create-rate" component={RatesForm} />
           <PrivateRoute exact path="/agents" component={Agents} />
           <PrivateRoute exact path="/create-agent" component={AgentForm} />
+          <PrivateRoute exact path="/agent-view/:id" component={AgentView} />
           <PrivateRoute exact path="/assets" component={Assets} />
           <PrivateRoute exact path="/add-assets" component={AssetForm} />
           <PrivateRoute exact path="/customer-reviews" component={Reviews} />
