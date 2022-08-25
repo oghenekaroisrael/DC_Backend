@@ -318,20 +318,14 @@ class Sidebar extends Component {
             </Link>
           </li>
 
-          <li className={this.isPathActive('/progress') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
+          {/* <li className={this.isPathActive('/progress') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
             <Link className="nav-link" to="/progress">
               <span className="menu-icon"><i className="mdi mdi-album"></i></span>
               <span className="menu-title">
-                {/* <Trans> */}
                 Progress
-                {/* </Trans> */}
               </span>
             </Link>
-          </li>
-
-
-
-
+          </li> */}
 
           {/* <li className={this.isPathActive('/prices') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
             <div className={this.state.pricesOpen ? 'nav-link menu-expanded' : 'nav-link'} onClick={() => this.toggleMenuState('pricesOpen')} data-toggle="collapse">

@@ -29,8 +29,6 @@ const RequestForm = lazy(() => import('./delivery-requests/RequestForm'));
 
 const Payment = lazy(() => import('./payments/Payment'));
 
-const Progress = lazy(() => import('./progress/Progress'));
-
 class AppRoutes extends Component {
   render () {
     return (
@@ -49,7 +47,6 @@ class AppRoutes extends Component {
           <PrivateRoute exact path="/requests" component={Request} />
           <PrivateRoute exact path="/request-details/:id" component={RequestForm} />
           <PrivateRoute exact path="/payments" component={Payment} />
-          <PrivateRoute exact path="/progress" component={Progress} />
           
           <PublicRoute exact path="/login" component={Login} restricted={true} />
           <PublicRoute exact path="/register" component={Register} restricted={true} />
