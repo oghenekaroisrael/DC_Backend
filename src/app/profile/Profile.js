@@ -31,7 +31,7 @@ export function Profile(props) {
         whatsapp: "",
         phoneNumber: "",
         phoneNumber2: "",
-        providerId: 0,
+        providerId: 1,
     });
 
     const [managerDetails, setManagerDetails] = useState();
