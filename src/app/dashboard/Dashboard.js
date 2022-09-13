@@ -231,7 +231,11 @@ export const Dashboard = () => {
                         <td>{item.pickupArea}</td>
                         <td>{item.dropoffArea}</td>
                         <td>{item.size}</td>
-                        <td>{item.status}</td>
+                        <td>
+                          {item.status === "started" && <div className="badge badge-info">{item.status}</div>}
+                          {item.status === "completed" && <div className="badge badge-success">{item.status}</div>}
+                          {item.status === "processing" && <div className="badge badge-default">{item.status}</div>}
+                        </td>
                         <td style={{
                                                     display: 'flex',
                                                     justifyContent: 'space-evenly'

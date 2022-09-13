@@ -70,7 +70,11 @@ export function Request() {
                                                 <td>{request.pickupPhoneNumber}</td>
                                                 <td>{request.size}</td>
                                                 <td>{request.priority}</td>
-                                                <td>{request.status}</td>
+                                                <td>
+                                                {request.status === "started" && <div className="badge badge-info">{request.status}</div>}
+                                                {request.status === "completed" && <div className="badge badge-success">{request.status}</div>}
+                                                {request.status === "processing" && <div className="badge badge-default">{request.status}</div>}
+                                                </td>
                                                 <td style={{
                                                     display: 'flex',
                                                     justifyContent: 'space-evenly'

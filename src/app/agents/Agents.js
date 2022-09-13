@@ -53,7 +53,10 @@ export function Agents() {
                                                 <td>{agent.state}</td>
                                                 <td>{agent.address}</td>
                                                 <td>{agent.phoneNumber}</td>
-                                                <td>{agent.status}</td>
+                                                <td>
+                                                {agent.status === "offline" && <div className="badge badge-danger">{agent.status}</div>}
+                                                {agent.status === "online" && <div className="badge badge-success">{agent.status}</div>}
+                                                </td>
                                                 <td style={{
                                                         display: 'flex',
                                                         justifyContent: 'space-evenly'
