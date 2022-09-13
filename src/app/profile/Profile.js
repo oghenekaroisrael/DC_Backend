@@ -346,7 +346,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">First Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="first_name" defaultValue={props.companyOwnerDetails.firstName} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="first_name" defaultValue={companyOwnerDetails.firstName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -354,7 +354,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number" defaultValue={props.companyOwnerDetails.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="phone_number" defaultValue={companyOwnerDetails.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -364,7 +364,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Last Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="last_name" defaultValue={props.companyOwnerDetails.lastName} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="last_name" defaultValue={companyOwnerDetails.lastName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -372,7 +372,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number 2</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number_2" defaultValue={props.companyOwnerDetails.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="phone_number_2" defaultValue={companyOwnerDetails.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -382,7 +382,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Other Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="other_name" defaultValue={props.companyOwnerDetails.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
+                                                <Form.Control name="other_name" defaultValue={companyOwnerDetails.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -390,7 +390,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Whatsapp</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="whatsapp_number" defaultValue={props.companyOwnerDetails.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="whatsapp_number" defaultValue={companyOwnerDetails.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -400,7 +400,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Email</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="email" defaultValue={props.companyOwnerDetails.email} onChange={handleInputOwner} type="email" placeholder="john.doe@gmail.com" />
+                                                <Form.Control name="email" defaultValue={companyOwnerDetails.email} onChange={handleInputOwner} type="email" placeholder="john.doe@gmail.com" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -408,7 +408,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address" defaultValue={props.companyOwnerDetails.address} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="address" defaultValue={companyOwnerDetails.address} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
