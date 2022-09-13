@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import { fetchProfile, updateCompanyDetails, updateManagerDetails } from '../redux/actions/profile';
+import { fetchProfile, updateCompanyDetails, updateManagerDetails, updateOwnerDetails } from '../redux/actions/profile';
 
 import identificationMethods from '../data/identification-methods'
 import banks from '../data/banks'
@@ -21,6 +21,8 @@ export function Profile(props) {
     const key = 'sk_test_f0ceeebbc0541de58d6bf05fe0959da518520043';
 
     const [companyDetails, setCompanyDetails] = useState({});
+
+    const [companyOwnerDetails, setCompanyOwnerDetails] = useState({});
 
     const [managerDetails, setManagerDetails] = useState();
 
@@ -107,6 +109,13 @@ export function Profile(props) {
         })
     }
 
+    const handleInputOwner = (e) => {
+        setCompanyOwnerDetails({
+            ...companyOwnerDetails,
+            [e.target.name]: e.target.value
+        })
+    }
+
     const handleUpdateCompanyDetails = () => {
         if (Object.keys(companyDetails).length) {
             props.updateCompanyDetails(companyDetails);
@@ -153,6 +162,13 @@ export function Profile(props) {
         if (Object.keys(managerDetails).length) {
             props.updateManagerDetails(managerDetails);
             setManagerDetails(null)
+        }
+    }
+
+    const handleUpdateOwnerDetails = () => {
+        if (Object.keys(companyOwnerDetails).length) {
+            props.updateOwnerDetails(companyOwnerDetails);
+            setCompanyOwnerDetails(null)
         }
     }
 
@@ -320,7 +336,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">First Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="first_name" defaultValue={props.companyDetails.owner_first_name} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="first_name" defaultValue={props.companyOwnerDetails.firstName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -328,7 +344,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number" defaultValue={props.companyDetails.owner_phone_number} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="phone_number" defaultValue={props.companyOwnerDetails.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -338,7 +354,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Last Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="last_name" defaultValue={props.companyDetails.owner_last_name} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="last_name" defaultValue={props.companyOwnerDetails.lastName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -346,7 +362,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number 2</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number_2" defaultValue={props.companyDetails.owner_phone_number_2} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="phone_number_2" defaultValue={props.companyOwnerDetails.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -356,7 +372,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Other Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="other_name" defaultValue={props.companyDetails.owner_other_name} onChange={handleInputManager} type="text" placeholder="Olamide" />
+                                                <Form.Control name="other_name" defaultValue={props.companyOwnerDetails.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -364,7 +380,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Whatsapp</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="whatsapp_number" defaultValue={props.companyDetails.owner_whatsapp_number} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="whatsapp_number" defaultValue={props.companyOwnerDetails.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -374,7 +390,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Email</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="email" defaultValue={props.companyDetails.owner_email} onChange={handleInputManager} type="email" placeholder="john.doe@gmail.com" />
+                                                <Form.Control name="email" defaultValue={props.companyOwnerDetails.email} onChange={handleInputOwner} type="email" placeholder="john.doe@gmail.com" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -382,13 +398,13 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address" defaultValue={props.companyDetails.owner_address} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="address" defaultValue={props.companyOwnerDetails.address} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
                                 </div>
                                 <div className="mt-3">
-                                    <button onClick={handleUpdateManagerDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={handleInputOwner} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>

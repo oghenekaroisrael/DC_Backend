@@ -5,6 +5,7 @@ const initialState = {
     agents: [],
     companyDetails: {},
     managerDetails: {},
+    ownerDetails: {},
     fetchingFares: false,
     fetchFaresError: null,
 };
@@ -185,6 +186,35 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 updatingManagerDetails: false,
                 updateManagerDetailsError: action.payload,
+            }
+        }
+
+        
+        //start
+        case profileActionTypes.UPDATE_OWNER_DETAILS_START: {
+            return {
+                ...state,
+                updatingOwnerDetails: true,
+                updateOwnerDetailsError: null,
+            }
+        }
+        case profileActionTypes.UPDATE_OWNER_DETAILS_SUCCESS: {
+            const newOwnerDetails = { 
+                ...state.ownerDetails, 
+                ...action.payload 
+            };
+            return {
+                ...state,
+                ownerDetails: newOwnerDetails,
+                updatingOwnerDetails: false,
+                updateOwnerDetailsError: null,
+            }
+        }
+        case profileActionTypes.UPDATE_OWNER_DETAILS_FAILURE: {
+            return {
+                ...state,
+                updatingOwnerDetails: false,
+                updateOwnerDetailsError: action.payload,
             }
         }
         // case profileActionTypes.CREATE_FARE: {

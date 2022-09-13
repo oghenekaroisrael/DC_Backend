@@ -60,6 +60,26 @@ export const updateManagerDetailsFailure = (payload) => {
         payload
     }
 }
+//start
+export const updateOwnerDetailsStart = () => {
+    return {
+        type: profileActionTypes.UPDATE_OWNER_DETAILS_START,
+    };
+}
+
+export const updateOwnerDetailsSuccess = (payload) => {
+    return {
+        type: profileActionTypes.UPDATE_OWNER_DETAILS_SUCCESS,
+        payload,
+    };
+}
+
+export const updateOwnerDetailsFailure = (payload) => {
+    return {
+        type: profileActionTypes.UPDATE_OWNER_DETAILS_FAILURE,
+        payload
+    }
+}
 
 export const updateFareStart = () => {
     return {
@@ -276,6 +296,26 @@ export const updateManagerDetails = (data) => dispatch => {
                 dispatch(updateManagerDetailsSuccess(data));
             } else {
                 dispatch(updateManagerDetailsFailure("Oops. An error occured."));
+            }
+        })
+        .catch(err => {
+            console.error(err.message);
+        });
+}
+
+export const updateOwnerDetails = (data) => dispatch => {
+    dispatch(updateOwnerDetailsStart());
+    fetch(endpoints.API_HOME2 + `/owner/update`, {
+        method: "POST",
+        headers: getHeaders(true),
+        body: JSON.stringify(data)
+    })
+        .then(async res => {
+            if (res.status === 200) {
+                await res.json();
+                dispatch(updateOwnerDetailsSuccess(data));
+            } else {
+                dispatch(updateOwnerDetailsFailure("Oops. An error occured."));
             }
         })
         .catch(err => {
