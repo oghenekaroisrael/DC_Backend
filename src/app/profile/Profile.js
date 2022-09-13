@@ -22,7 +22,17 @@ export function Profile(props) {
 
     const [companyDetails, setCompanyDetails] = useState({});
 
-    const [companyOwnerDetails, setCompanyOwnerDetails] = useState({});
+    const [companyOwnerDetails, setCompanyOwnerDetails] = useState({
+        firstName: "",
+        lastName: "",
+        middleName: "",
+        email: "",
+        address: "",
+        whatsapp: "",
+        phoneNumber: "",
+        phoneNumber2: "",
+        providerId: 0,
+    });
 
     const [managerDetails, setManagerDetails] = useState();
 
@@ -404,7 +414,7 @@ export function Profile(props) {
                                     </div>
                                 </div>
                                 <div className="mt-3">
-                                    <button onClick={handleInputOwner} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={handleUpdateOwnerDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>
