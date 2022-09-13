@@ -31,7 +31,7 @@ export function Profile(props) {
         whatsapp: "",
         phoneNumber: "",
         phoneNumber2: "",
-        providerId: 1,
+        providerId: 1, // get data
     });
 
     const [managerDetails, setManagerDetails] = useState();
@@ -177,7 +177,7 @@ export function Profile(props) {
 
     const handleUpdateOwnerDetails = () => {
         if (Object.keys(companyOwnerDetails).length) {
-            props.updateOwnerDetails(companyOwnerDetails);
+            updateOwnerDetails(companyOwnerDetails);
             setCompanyOwnerDetails(null)
         }
     }
