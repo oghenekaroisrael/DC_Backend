@@ -10,12 +10,13 @@ COPY package.json ./
 COPY yarn.lock ./
 
 # We install our dependencies
-RUN yarn
+RUN yarn install
 # We install react-scripts globally to avoid any bad surprise
 RUN yarn add react-scripts@3.1.1 -g
 
 # COPY our app
 COPY . ./
+EXPOSE 3000
 
-# And we build! -yarn comes with the node:16.10 image-
+# And we build! -yarn comes with the node:14.10 image-
 RUN yarn run build

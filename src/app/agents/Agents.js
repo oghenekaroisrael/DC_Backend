@@ -62,7 +62,7 @@ export function Agents() {
                                                         justifyContent: 'space-evenly'
                                                     }}>
                                                         <Link to={`/agent-view/${agent.id}`}>
-                                                            <i className='btn btn-white btn-lg mdi mdi-eye border-white'></i>
+                                                            <i className='btn btn-primary btn-lg mdi mdi-eye border-primary'></i>
                                                         </Link>
                                                         <button className={`btn btn-${agent.defaultAgent === true ? 'disabled' : 'info'} btn-icon-text`}
                                                         onClick={() => handleSetDefaultAgent(agent.id)}>

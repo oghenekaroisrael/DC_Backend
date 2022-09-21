@@ -199,10 +199,10 @@ export function AgentForm(props) {
                                 <Form.Group>
                                     <label htmlFor="selectIDMethod">Means of Identification</label>
                                     <select key={`id-method-${formData.id_method}`} name="id_method" value={formData.id_method} onChange={handleInput} className="form-control" id="selectIDMethod">
-                                        <option value={identificationMethods[2].value}>{identificationMethods[2].label}</option>
-                                        {/* {identificationMethods.map((option) => (
+                                        {/* <option value={identificationMethods[2].value}>{identificationMethods[2].label}</option> */}
+                                        {identificationMethods.map((option) => (
                                             <option key={`id-method-${option.value}`} value={option.value}>{option.label}</option>
-                                        ))} */}
+                                        ))}
                                     </select>
                                 </Form.Group>
                                 <Form.Group>

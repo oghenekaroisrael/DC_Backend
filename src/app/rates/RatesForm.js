@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
+import "react-select/dist/react-select.css";
+import "react-virtualized-select/styles.css";
+import React, { useState, useEffect } from 'react';
+import Select from "react-virtualized-select";
 import { Form } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-
 import { createFare } from '../redux/actions/profile';
+import { fetchLocations } from '../redux/actions/location';
 
 
-import places from '../data/places'
+import locations from '../data/places';
 
-export function RatesForm(props) {
+export function RatesForm() {
     const dispatch = useDispatch();
     const history = useHistory();
+    const [places, setPlaces] = useState([]);
+    const { locations } = useSelector(state => state.locationReducer);
+
     const [formData, setFormData] = useState({
         origin: "",
         destination: "",
         size: "",
         cost: "",
     });
+
+    useEffect(() => {
+        let listPlaces = [];
+    
+        for (let i = 0; i < locations?.length; i++) {
+            listPlaces.push({
+                label: locations[i].name+" "+locations[i].city,
+                value: locations[i].id,
+            });
+        }
+        
+        setPlaces(listPlaces);
+        
+        console.log(places);
+
+    }, []);
+    
 
     const handleInput = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -54,10 +77,16 @@ export function RatesForm(props) {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label">Origin</label>
                                         <div className="col-sm-9">
-                                            <select name="origin" value={formData.origin} onChange={handleInput} className="form-control">
+                                            {/* <select name="origin" value={formData.origin} onChange={handleInput} className="form-control">
                                                 <option value=""> Choose a location </option>
                                                 {places.map(place => (<option>{place}</option>))}
-                                            </select>
+                                            </select> */}
+                                            <Select
+                                            name="origin"
+                                            className="form-control"
+                                            options={places}
+                                            onChange={opt => console.log(opt.label, opt.value)}
+                                            />
                                         </div>
                                     </Form.Group>
                                 </div>
@@ -66,10 +95,10 @@ export function RatesForm(props) {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label"> Destination </label>
                                         <div className="col-sm-9">
-                                            <select name="destination" value={formData.destination} onChange={handleInput} className="form-control">
+                                            {/* <select name="destination" value={formData.destination} onChange={handleInput} className="form-control">
                                                 <option value=""> Choose a location </option>
                                                 {places.map(place => (<option>{place}</option>))}
-                                            </select>
+                                            </select> */}
                                         </div>
                                     </Form.Group>
                                 </div>

@@ -1,61 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchProfile, updateCompanyDetails, updateManagerDetails, updateOwnerDetails } from '../redux/actions/profile';
+import { fetchProfile, getIdentificationDetails, getInsuranceDetails, getManagerDetails, getOwnerDetails, getPricing, updateCompanyDetails, updateIdentificationDetails, updateInsuranceDetails, updateManagerDetails, updateOwnerDetails, updatePricing } from '../redux/actions/profile';
 
-import identificationMethods from '../data/identification-methods'
-import banks from '../data/banks'
+import identificationMethods from '../data/identification-methods';
+import banks from '../data/banks';
 import { endpoints, getHeaders } from '../redux/helpers/api';
 
-function formatDate(input) {
-    if (!input){
-        return;
-    }
-    let date = new Date(input);
-    let output = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
-    return output;
-}
-
 export function Profile(props) {
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.authReducer.user);
+    const reduxCompanyDetails = useSelector(state => state.profileReducer.companyDetails);
+    const providerDetails = useSelector(state => state.profileReducer.providerDetails);
+    const reduxManagerDetails = useSelector(state => state.profileReducer.managerDetails);
+    const reduxOwnerDetails = useSelector(state => state.profileReducer.ownerDetails);
+    const reduxIdentificationDetails = useSelector(state => state.profileReducer.identification);
+    const reduxInsuranceDetails = useSelector(state => state.profileReducer.insuranceDetails);
+    const reduxPricing = useSelector(state => state.profileReducer.pricingPreference);
     const key = 'sk_test_f0ceeebbc0541de58d6bf05fe0959da518520043';
 
     const [companyDetails, setCompanyDetails] = useState({});
-
-    const [companyOwnerDetails, setCompanyOwnerDetails] = useState({
-        firstName: "",
-        lastName: "",
-        middleName: "",
-        email: "",
-        address: "",
-        whatsapp: "",
-        phoneNumber: "",
-        phoneNumber2: "",
-        providerId: 1, // get data
-    });
-
-    const [managerDetails, setManagerDetails] = useState();
-
+    const [ownerDetails, setOwnerDetails] = useState({});
+    const [managerDetails, setManagerDetails] = useState({});
+    const [identificationDetails, setIdentificationDetails] = useState({});
+    const [insuranceDetails, setInsuranceDetails] = useState({});
+    const [pricing, setPricing] = useState({});
     const [banks, setbanks] = useState([]);
-
     const [currentBankDetail, setCurrentBankDetail] = useState({});
-
     const [bankdetails, setbankdetails] = useState({
-        "business_name": "",
-        "bank_code": "",
-        "account_number": "",
-        "percentage_charge": 0.2
+        business_name: "",
+        bank_code: "",
+        account_number: "",
+        percentage_charge: 0.2,
     });
     
 
     useEffect(() => {
-        props.fetchProfile();
-        fetch('https://api.paystack.co/bank?country=nigeria')
+        dispatch(fetchProfile());
+        dispatch(getOwnerDetails());
+        dispatch(getManagerDetails());
+        dispatch(getIdentificationDetails());
+        dispatch(getInsuranceDetails());
+        dispatch(getPricing());
+
+        setOwnerDetails(reduxOwnerDetails);
+        setManagerDetails(reduxManagerDetails);
+        setIdentificationDetails(reduxIdentificationDetails);
+        setInsuranceDetails(reduxInsuranceDetails);
+        setPricing(reduxPricing);
+
+        let isDone = false;
+        const fetchbanks = async () => {
+            fetch('https://api.paystack.co/bank?country=nigeria')
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
                 } else {
-                    alert("Oops. An Error Occured")
+                    console.log("Oops. An Error Occured");
+                    // alert("Oops. An Error Occured")
                 }
             })
             .then(data => {
@@ -67,7 +70,8 @@ export function Profile(props) {
             if (res.status === 200) {
                 return res.json();
             } else {
-                alert("Oops. An Error Occured");
+                    console.log("Oops. An Error Occured");
+                    // alert("Oops. An Error Occured");
             }
         }).then(data => {
             console.log(data.payload.subaccount_code);
@@ -81,7 +85,7 @@ export function Profile(props) {
                 if (res.status === 200) {
                     return res.json();
                 } else {
-                    alert("Oops. An Error Occured")
+                    console.log("failed to get sub accounts");
                 }
             })
             .then(data => {
@@ -94,9 +98,15 @@ export function Profile(props) {
                 });
         });
         }).catch(err => {
-            alert("Oops. An Error Occured");
+                    console.log("Oops. An Error Occured", err);
+                    // alert("Oops. An Error Occured");
         });
-    }, []);
+        }
+        fetchbanks();
+        return () => {
+            isDone = true;
+        };
+    }, [dispatch]);
 
     const handleInputCompany = (e) => {
         setCompanyDetails({
@@ -120,16 +130,42 @@ export function Profile(props) {
     }
 
     const handleInputOwner = (e) => {
-        setCompanyOwnerDetails({
-            ...companyOwnerDetails,
+        setOwnerDetails({
+            ...ownerDetails,
             [e.target.name]: e.target.value
         })
     }
 
+    const handleInputIdentification = (e) => {
+        setIdentificationDetails({
+            ...identificationDetails,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleInputInsurance = (e) => {
+        setInsuranceDetails({
+            ...insuranceDetails,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleInputPricing = (name, value) => {
+        setPricing({
+            ...pricing,
+            [name]: value
+        });
+    }
+
+    useEffect(() => {
+      alert(JSON.stringify(pricing));
+    }, [pricing]);
+    
+
     const handleUpdateCompanyDetails = () => {
         if (Object.keys(companyDetails).length) {
-            props.updateCompanyDetails(companyDetails);
-            setCompanyDetails(null)
+            updateCompanyDetails(companyDetails);
+            setCompanyDetails({});
         }
     }
 
@@ -141,13 +177,14 @@ export function Profile(props) {
                 Authorization: `Bearer ${key}`,
                 'Content-Type': 'application/json'
             }
-        })
+        }) 
         .then(res => {
             if (res.status === 201) {
                 return res.json()
 
             } else {
-                alert("Oops. An Error Occured");
+                    console.log("Oops. An Error Occured");
+                    // alert("Oops. An Error Occured");
             }
         }).then(data => {
             fetch(endpoints.API_HOME + '/providers/bank/details', {
@@ -158,28 +195,61 @@ export function Profile(props) {
                 if (res.status === 200) {
                     window.location.reload();
                 } else {
-                    alert("Oops. An Error Occured");
+                    // alert("Oops. An Error Occured");
+                    console.log("Oops. An Error Occured");
                 }
             }).catch(err => {
-                alert("Oops. An Error Occured");
+                // alert("Oops. An Error Occured");
+                console.log("Oops. An Error Occured");
             });
         }).catch(err => {
-            alert("Oops. An Error Occured");
+                    console.log("Oops. An Error Occured");
+                    // alert("Oops. An Error Occured");
         });
     }
 
     const handleUpdateManagerDetails = () => {
         if (Object.keys(managerDetails).length) {
-            props.updateManagerDetails(managerDetails);
-            setManagerDetails(null)
+            dispatch(updateManagerDetails({...managerDetails, providerId: providerDetails.id}));
+            setManagerDetails({});
         }
     }
 
     const handleUpdateOwnerDetails = () => {
-        if (Object.keys(companyOwnerDetails).length) {
-            updateOwnerDetails(companyOwnerDetails);
-            setCompanyOwnerDetails(null)
+        if (Object.keys(ownerDetails).length) {
+            dispatch(updateOwnerDetails({...ownerDetails, providerId: providerDetails.id}));
+            setOwnerDetails({});
         }
+    }
+
+    const handleUpdateIdentificationDetails = () => {
+        if (Object.keys(identificationDetails).length) {
+            dispatch(updateIdentificationDetails({...identificationDetails, providerId: providerDetails.id}));
+            setIdentificationDetails({});
+        }
+    }
+
+    const handleUpdateInsuranceDetails = () => {
+        if (Object.keys(insuranceDetails).length) {
+            dispatch(updateInsuranceDetails({...insuranceDetails, providerId: providerDetails.id}));
+            setInsuranceDetails({});
+        }
+    }
+
+    const handleUpdatePricing = () => {
+        if (Object.keys(pricing).length) {
+            dispatch(updatePricing({...pricing, providerId: providerDetails.id}));
+            setPricing({});
+        }
+    }
+
+    const formatDate = (input) => {
+        if (!input){
+            return;
+        }
+        let date = new Date(input);
+        let output = `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+        return output;
     }
 
     return (
@@ -206,7 +276,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Company Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control type="text" value={props.user.name} className="bg-dark" readOnly />
+                                                <Form.Control type="text" value={user.name} className="bg-dark" readOnly />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -214,7 +284,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number" defaultValue={props.companyDetails.phone_number} onChange={handleInputCompany} type="tel" placeholder="+234" />
+                                                <Form.Control name="phoneNumber" defaultValue={companyDetails.phoneNumber} onChange={handleInputCompany} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -224,7 +294,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Email</label>
                                             <div className="col-sm-9">
-                                                <Form.Control type="email" value={props.user.email} className="bg-dark" readOnly />
+                                                <Form.Control type="email" value={user.email} className="bg-dark" readOnly />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -233,7 +303,7 @@ export function Profile(props) {
                                             <label className="col-sm-3 col-form-label">Website</label>
                                             <div className="col-sm-9">
                                                 <Form.Control
-                                                    name="website" defaultValue={props.companyDetails.website} onChange={handleInputCompany}
+                                                    name="website" defaultValue={companyDetails.website} onChange={handleInputCompany}
                                                     type="url"
                                                     placeholder="https://example.com"
                                                     pattern="https://.*" size="30"
@@ -247,7 +317,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">CAC Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="cac_no" defaultValue={props.companyDetails.cac_no} onChange={handleInputCompany} type="text" placeholder="" />
+                                                <Form.Control name="cac_no" defaultValue={companyDetails.cac_no} onChange={handleInputCompany} type="text" placeholder="" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -255,7 +325,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">VAT Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="vat_no" defaultValue={props.companyDetails.vat_no} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="vat_no" defaultValue={companyDetails.vat_no} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -265,7 +335,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">TIN Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="tin_no" defaultValue={props.companyDetails.tin_no} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="tin_no" defaultValue={companyDetails.tin_no} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -276,7 +346,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address 1</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address_1" defaultValue={props.companyDetails.address_1} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="address_1" defaultValue={companyDetails.address_1} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -284,7 +354,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">State</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="state" defaultValue={props.companyDetails.state} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="state" defaultValue={companyDetails.state} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -294,7 +364,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address 2</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address_2" defaultValue={props.companyDetails.address_2} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="address_2" defaultValue={companyDetails.address_2} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -302,7 +372,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Postcode</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="post_code" defaultValue={props.companyDetails.post_code} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="post_code" defaultValue={companyDetails.post_code} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -312,7 +382,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">City</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="city" defaultValue={props.companyDetails.city} onChange={handleInputCompany} type="text" />
+                                                <Form.Control name="city" defaultValue={companyDetails.city} onChange={handleInputCompany} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -320,7 +390,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Country</label>
                                             <div className="col-sm-9">
-                                                <select name="country" defaultValue={props.companyDetails.country} onChange={handleInputCompany} className="form-control">
+                                                <select name="country" defaultValue={companyDetails.country} onChange={handleInputCompany} className="form-control">
                                                     <option>Nigeria</option>
                                                 </select>
                                             </div>
@@ -346,7 +416,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">First Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="first_name" defaultValue={companyOwnerDetails.firstName} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="firstName" value={ownerDetails?.firstName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -354,7 +424,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number" defaultValue={companyOwnerDetails.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="phoneNumber" value={ownerDetails?.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -364,7 +434,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Last Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="last_name" defaultValue={companyOwnerDetails.lastName} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="lastName" value={ownerDetails?.lastName} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -372,7 +442,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number 2</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number_2" defaultValue={companyOwnerDetails.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="phoneNumber2" value={ownerDetails?.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -382,7 +452,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Other Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="other_name" defaultValue={companyOwnerDetails.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
+                                                <Form.Control name="middleName" value={ownerDetails?.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -390,7 +460,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Whatsapp</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="whatsapp_number" defaultValue={companyOwnerDetails.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
+                                                <Form.Control name="whatsapp" value={ownerDetails?.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -400,7 +470,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Email</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="email" defaultValue={companyOwnerDetails.email} onChange={handleInputOwner} type="email" placeholder="john.doe@gmail.com" />
+                                                <Form.Control name="email" value={ownerDetails?.email} onChange={handleInputOwner} type="email" placeholder="johndoe@gmail.com" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -408,7 +478,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address" defaultValue={companyOwnerDetails.address} onChange={handleInputOwner} type="text" />
+                                                <Form.Control name="address" value={ownerDetails?.address} onChange={handleInputOwner} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -432,7 +502,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">First Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="first_name" defaultValue={props.managerDetails.first_name} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="firstName" defaultValue={managerDetails?.firstName} onChange={handleInputManager} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -440,7 +510,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number" defaultValue={props.managerDetails.phone_number} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="phoneNumber" defaultValue={managerDetails?.phoneNumber} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -450,7 +520,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Last Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="last_name" defaultValue={props.managerDetails.last_name} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="lastName" defaultValue={managerDetails?.lastName} onChange={handleInputManager} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -458,7 +528,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Phone Number 2</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="phone_number_2" defaultValue={props.managerDetails.phone_number_2} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="phoneNumber2" defaultValue={managerDetails?.phoneNumber2} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -468,7 +538,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Other Name</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="other_name" defaultValue={props.managerDetails.other_name} onChange={handleInputManager} type="text" placeholder="Olamide" />
+                                                <Form.Control name="middleName" defaultValue={managerDetails?.middleName} onChange={handleInputManager} type="text" placeholder="Olamide" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -476,7 +546,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Whatsapp</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="whatsapp_number" defaultValue={props.managerDetails.whatsapp_number} onChange={handleInputManager} type="tel" placeholder="+234" />
+                                                <Form.Control name="whatsapp" defaultValue={managerDetails?.whatsapp} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -486,7 +556,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Email</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="email" defaultValue={props.managerDetails.email} onChange={handleInputManager} type="email" placeholder="john.doe@gmail.com" />
+                                                <Form.Control name="email" defaultValue={managerDetails?.email} onChange={handleInputManager} type="email" placeholder="john.doe@gmail.com" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -494,7 +564,7 @@ export function Profile(props) {
                                         <Form.Group className="row">
                                             <label className="col-sm-3 col-form-label">Address</label>
                                             <div className="col-sm-9">
-                                                <Form.Control name="address" defaultValue={props.managerDetails.address} onChange={handleInputManager} type="text" />
+                                                <Form.Control name="address" defaultValue={managerDetails?.address} onChange={handleInputManager} type="text" />
                                             </div>
                                         </Form.Group>
                                     </div>
@@ -515,7 +585,7 @@ export function Profile(props) {
                             <form className="forms-sample">
                                 <Form.Group>
                                     <label htmlFor="selectIDMethod">Means of Identification</label>
-                                    <select key={`id-method-${props.managerDetails.id_method}`} name="id_method" defaultValue={props.managerDetails.id_method} onChange={handleInputManager} className="form-control" id="selectIDMethod">
+                                    <select key={`id-method-${String(identificationDetails?.type)?.replace(" ","-")}`} name="type" defaultValue={identificationDetails?.type} onChange={handleInputIdentification} className="form-control" id="selectIDMethod">
                                         {/* <option value="">None</option> */}
                                         {identificationMethods.map((option) => (
                                             <option key={`id-method-${option.value}`} value={option.value}>{option.label}</option>
@@ -524,25 +594,25 @@ export function Profile(props) {
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Identification Number</label>
-                                    <Form.Control name="id_image_url" defaultValue={props.managerDetails.id_image_url} onChange={handleInputManager} type="text" className="form-control" />
+                                    <Form.Control name="identificationNumber" defaultValue={identificationDetails?.identificationNumber} onChange={handleInputIdentification} type="text" className="form-control" />
                                 </Form.Group>
-                                {/* <Form.Group>
+                                <Form.Group>
                                     <label>Upload an image of your ID</label>
                                     <div className="custom-file">
-                                        <Form.Control name="id_image_url" defaultValue={props.managerDetails.id_image_url} onChange={handleInputManager} type="file" className="form-control visibility-hidden" id="customFileLang" lang="es" />
+                                        <Form.Control name="idImageUrl" defaultValue={identificationDetails?.id_image_url} onChange={handleInputIdentification} type="file" className="form-control visibility-hidden" id="customFileLang" lang="es" />
                                         <label className="custom-file-label" htmlFor="customFileLang">Upload ID</label>
                                     </div>
-                                </Form.Group> */}
+                                </Form.Group>
                                 <Form.Group>
                                     <label>Issue Date</label>
-                                    <Form.Control name="issue_date" defaultValue={formatDate(props.managerDetails.issue_date)} onChange={handleInputManager} type="date" className="form-control" />
+                                    <Form.Control name="issueDate" defaultValue={formatDate(identificationDetails?.issueDate)} onChange={handleInputIdentification} type="date" className="form-control" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Expire Date</label>
-                                    <Form.Control name="expire_date" defaultValue={formatDate(props.managerDetails.expire_date)} onChange={handleInputManager} type="date" className="form-control" />
+                                    <Form.Control name="expiryDate" defaultValue={formatDate(identificationDetails?.expiryDate)} onChange={handleInputIdentification} type="date" className="form-control" />
                                 </Form.Group>
                                 <div className="mt-4">
-                                    <button onClick={handleUpdateManagerDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={handleUpdateIdentificationDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>
@@ -556,7 +626,7 @@ export function Profile(props) {
                             <form className="forms-sample">
                                 <Form.Group>
                                     <label htmlFor="selectBank">Bank Name</label>
-                                    <select key={`bank-name-${props.companyDetails.bank_name}`} name="bank_code" defaultValue={currentBankDetail.settlement_bank} onChange={handleInputBankDetails} className="form-control" id="selectBank">
+                                    <select key={`bank-name-${companyDetails.bank_name}`} name="bank_code" defaultValue={currentBankDetail?.settlement_bank} onChange={handleInputBankDetails} className="form-control" id="selectBank">
                                         {/* <option value="">None</option> */}
                                         {banks.map((option) => (
                                             <option key={option.slug} value={option.code}>{option.name}</option>
@@ -565,15 +635,15 @@ export function Profile(props) {
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Name</label>
-                                    <Form.Control name="business_name" defaultValue={currentBankDetail.business_name} onChange={handleInputBankDetails} type="text" />
+                                    <Form.Control name="business_name" defaultValue={currentBankDetail?.business_name} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Account Number</label>
-                                    <Form.Control name="account_number" defaultValue={currentBankDetail.account_number} onChange={handleInputBankDetails} type="text" />
+                                    <Form.Control name="account_number" defaultValue={currentBankDetail?.account_number} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label htmlFor="selectDepositFrequency">Frequency of deposit </label>
-                                    <select name="settlement_schedule" defaultValue={currentBankDetail.settlement_schedule} onChange={handleInputBankDetails} className="form-control" id="selectDepositFrequency">
+                                    <select name="settlement_schedule" defaultValue={currentBankDetail?.settlement_schedule} onChange={handleInputBankDetails} className="form-control" id="selectDepositFrequency">
                                         {/* <option value="">None</option> */}
                                         {["AUTO", "daily", "weekly"].map((option) => (
                                             <option key={`pay-freq-${option}`} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
@@ -595,14 +665,14 @@ export function Profile(props) {
                             <form className="forms-sample">
                                 <Form.Group>
                                     <label className="col-form-label">Goods-In-Transit Insurance Name</label>
-                                    <Form.Control name="git_insurance_name" defaultValue={props.companyDetails.git_insurance_name} onChange={handleInputCompany} type="text" />
+                                    <Form.Control name="goodsInTransitInsuranceName" defaultValue={insuranceDetails?.goodsInTransitInsuranceName} onChange={handleInputInsurance} type="text" />
                                 </Form.Group>
                                 <Form.Group>
                                     <label className="col-form-label">Goods-In-Transit Insurance Phone Number</label>
-                                    <Form.Control name="git_insurance_phone" defaultValue={props.companyDetails.git_insurance_phone} onChange={handleInputCompany} type="text" />
+                                    <Form.Control name="goodsInTransitPhoneNumber" defaultValue={insuranceDetails?.goodsInTransitPhoneNumber} onChange={handleInputInsurance} type="text" />
                                 </Form.Group>
                                 <div className="mt-4">
-                                    <button onClick={handleUpdateCompanyDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={handleUpdateInsuranceDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>
@@ -621,7 +691,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="flat_rate" value={1} onChange={handleInputCompany} id="flatRate1" defaultChecked={props.companyDetails.flat_rate} /> Yes
+                                                        <input type="radio" className="form-check-input" name="chargeFlatRate" value={true} defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="flatRate1" defaultChecked={pricing?.chargeFlatRate} /> Yes
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -629,7 +699,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="flat_rate" value={0} onChange={handleInputCompany} defaultChecked={!props.companyDetails.flat_rate} id="flatRateRadio2" /> No
+                                                        <input type="radio" className="form-check-input" name="chargeFlatRate" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} defaultChecked={!pricing?.chargeFlatRate} id="flatRateRadio2" /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -642,7 +712,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="weight_rate" value={1} onChange={handleInputCompany} id="weightRadio1" defaultChecked={props.companyDetails.weight_rate} /> Yes
+                                                        <input type="radio" className="form-check-input" name="chargeByWeight" value={true} defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio1"  defaultChecked={pricing?.chargeByWeight} /> Yes
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -650,7 +720,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="weight_rate" value={0} onChange={handleInputCompany} id="weightRadio2" defaultChecked={!props.companyDetails.weight_rate} /> No
+                                                        <input type="radio" className="form-check-input" name="chargeByWeight" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio2"  defaultChecked={!pricing?.chargeByWeight} /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -663,7 +733,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="distance_rate" value={1} onChange={handleInputCompany} id="distanceRadio1" defaultChecked={props.companyDetails.distance_rate} /> Yes
+                                                        <input type="radio" className="form-check-input" name="chargeByDistance" value={true} defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio1" defaultChecked={pricing?.chargeByDistance} /> Yes
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -671,7 +741,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="distance_rate" value={0} onChange={handleInputCompany} id="distanceRadio2" defaultChecked={!props.companyDetails.distance_rate} /> No
+                                                        <input type="radio" className="form-check-input" name="chargeByDistance" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio2" defaultChecked={!pricing?.chargeByDistance} /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -680,7 +750,7 @@ export function Profile(props) {
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <button onClick={handleUpdateCompanyDetails} type="button" className="btn btn-primary mr-2">Save Changes</button>
+                                    <button onClick={() => handleUpdatePricing()} type="button" className="btn btn-primary mr-2">Save Changes</button>
                                 </div>
                             </form>
                         </div>
@@ -692,21 +762,4 @@ export function Profile(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    user: state.authReducer.user,
-    companyDetails: state.profileReducer.companyDetails,
-    managerDetails: state.profileReducer.managerDetails,
-    // fetchingProfile: state.profileReducer.fetchingProfile,
-});
-
-function mapDispatchToProps(dispatch) {
-    return {
-        fetchProfile: () => dispatch(fetchProfile()),
-        // createFlatRate: (data) => dispatch(createFlatRate(data)),
-        updateCompanyDetails: (data) => dispatch(updateCompanyDetails(data)),
-        updateManagerDetails: (data) => dispatch(updateManagerDetails(data)),
-        // deleteFlatRate: (id) => dispatch(deleteFlatRate(id)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile;

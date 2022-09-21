@@ -4,6 +4,7 @@ import moment from 'moment';
 import { fetchDeliveries } from '../redux/actions/delivery';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { fetchLocations } from '../redux/actions/location';
 
 export const Dashboard = () => {
   const dispatch = useDispatch();

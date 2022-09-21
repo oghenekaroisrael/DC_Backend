@@ -6,6 +6,7 @@ import profileReducer from './profile';
 import agentReducer from './agent';
 import assetReducer from './asset';
 import deliveryReducer from './delivery';
+import locationReducer from './location';
 
 import errorReducer from './error.reducers';
 import redirectReducer from './redirect.reducers';
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
     profileReducer,
     agentReducer,
     deliveryReducer,
+    locationReducer,
     errorReducer,
     redirectReducer,
     preferencesReducer

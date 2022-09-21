@@ -193,8 +193,9 @@ export const createAgent = agent => async (dispatch) => {
         console.error(err.message);
     });
     if (res && res.status === 200) {
-        return res.json()
-            .then(data => {
+        const resp = await res.json();
+        console.log(resp);
+            resp.then(data => {
                 dispatch(createAgentSuccess({
                     email: agent.email,
                     password: agent.password

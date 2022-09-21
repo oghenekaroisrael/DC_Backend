@@ -8,11 +8,11 @@ import PublicRoute from './components/PublicRoute';
 const Dashboard = lazy(() => import('./dashboard/Dashboard'));
 const Profile = lazy(() => import('./profile/Profile'));
 
-const Rates = lazy(() => import('./rates/Rates'))
+const Rates = lazy(() => import('./rates/Rates'));
 const RatesForm = lazy(() => import('./rates/RatesForm'));
 
 const Assets = lazy(() => import('./assets/Assets'))
-const AssetForm = lazy(() => import('./assets/AssetForm'))
+const AssetForm = lazy(() => import('./assets/AssetForm'));
 
 const Agents = lazy(() => import('./agents/Agents'));
 const AgentForm = lazy(() => import('./agents/AgentForm'));
