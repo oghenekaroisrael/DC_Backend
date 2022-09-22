@@ -3,6 +3,9 @@
   "version": "1.1.0",
   "homepage": "https://delivery-connect-providers.herokuapp.com/",
   "private": true,
+  "engines": {
+    "node": ">=14.0.0 <16"
+  },
   "dependencies": {
     "@lourenci/react-kanban": "^0.13.0",
     "@mdi/font": "^4.2.95",
