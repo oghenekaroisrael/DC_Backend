@@ -305,6 +305,26 @@ export const fetchOwnerDetailsFailure = (payload) => {
     }
 }
 
+export const fetchCompanyDetailsStart = () => {
+    return {
+        type: profileActionTypes.FETCH_COMPANY_DETAILS_START,
+    };
+}
+
+const fetchCompanyDetailsSuccess = (payload) => {
+    return {
+        type: profileActionTypes.FETCH_COMPANY_DETAILS_SUCCESS,
+        payload,
+    };
+}
+
+export const fetchCompanyDetailsFailure = (payload) => {
+    return {
+        type: profileActionTypes.FETCH_COMPANY_DETAILS_FAILURE,
+        payload
+    }
+}
+
 
 export const fetchManagerDetailsStart = () => {
     return {
@@ -346,6 +366,21 @@ export const fetchFares = () => dispatch => {
             dispatch(fetchFaresFailure("Network error."));
         });
 }
+
+
+export const fetchStats = async (id) => {
+    const res = await fetch(endpoints.API_HOME + `/providers/deliveries/stats/${id}`, {
+        headers: getHeaders(true),
+    }).catch(err => {
+        console.error(err.message);
+    });
+
+    if (res && res.status === 200) {
+        return res.json();
+    }
+
+}
+
 
 export const createFare = rate => async (dispatch) => {
     dispatch(createFareStart())
@@ -430,7 +465,7 @@ export const fetchProfile = () => dispatch => {
 
 export const updateCompanyDetails = (data) => dispatch => {
     dispatch(updateCompanyDetailsStart());
-    fetch(endpoints.API_HOME + `/providers/`, {
+    fetch(endpoints.API_HOME2 + `/company/update`, {
         method: "PATCH",
         headers: getHeaders(true),
         body: JSON.stringify(data)
@@ -472,9 +507,9 @@ export const updateOwnerDetails = (data) => dispatch => {
         });
 }
 
-export const getOwnerDetails = () => dispatch => {
+export const getOwnerDetails = (id) => dispatch => {
     dispatch(fetchOwnerDetailsStart());
-    fetch(endpoints.API_HOME2 + `/owner/`, {
+    fetch(endpoints.API_HOME2 + `/owner/${id}`, {
         headers: getHeaders(true),
     })
         .then(async res => {
@@ -490,9 +525,27 @@ export const getOwnerDetails = () => dispatch => {
         });
 }
 
-export const getManagerDetails = () => dispatch => {
+export const getCompanyDetails = (id) => dispatch => {
+    dispatch(fetchCompanyDetailsStart());
+    fetch(endpoints.API_HOME2 + `/company/${id}`, {
+        headers: getHeaders(true),
+    })
+        .then(async res => {
+            if (res.status === 200) {
+                const resp = await res.json();
+                dispatch(fetchCompanyDetailsSuccess(resp.data));
+            } else {
+                dispatch(fetchCompanyDetailsFailure("Oops. An error occured."));
+            }
+        })
+        .catch(err => {
+            console.error(err.message);
+        });
+}
+
+export const getManagerDetails = (id) => dispatch => {
     dispatch(fetchManagerDetailsStart());
-    fetch(endpoints.API_HOME2 + `/manager/`, {
+    fetch(endpoints.API_HOME2 + `/manager/${id}`, {
         headers: getHeaders(true),
     })
         .then(async res => {
@@ -529,9 +582,9 @@ export const updateManagerDetails = (data) => dispatch => {
         });
 }
 
-export const getIdentificationDetails = () => dispatch => {
+export const getIdentificationDetails = (id) => dispatch => {
     dispatch(fetchIdentificationDetailsStart());
-    fetch(endpoints.API_HOME2 + `/identification/`, {
+    fetch(endpoints.API_HOME2 + `/identification/${id}`, {
         headers: getHeaders(true),
     })
         .then(async res => {
@@ -568,9 +621,9 @@ export const updateIdentificationDetails = (data) => dispatch => {
         });
 }
 
-export const getInsuranceDetails = () => dispatch => {
+export const getInsuranceDetails = (id) => dispatch => {
     dispatch(fetchInsuranceDetailsStart());
-    fetch(endpoints.API_HOME2 + `/insurance/`, {
+    fetch(endpoints.API_HOME2 + `/insurance/${id}`, {
         headers: getHeaders(true),
     })
         .then(async res => {
@@ -607,9 +660,9 @@ export const updateInsuranceDetails = (data) => dispatch => {
         });
 }
 
-export const getPricing = () => dispatch => {
+export const getPricing = (id) => dispatch => {
     dispatch(fetchPricingStart());
-    fetch(endpoints.API_HOME2 + `/pricing/`, {
+    fetch(endpoints.API_HOME2 + `/pricing/${id}`, {
         headers: getHeaders(true),
     })
         .then(async res => {

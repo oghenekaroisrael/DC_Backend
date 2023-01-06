@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-
 import { fetchFares } from '../redux/actions/profile';
 import { useDispatch, useSelector } from 'react-redux';
 

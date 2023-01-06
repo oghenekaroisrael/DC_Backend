@@ -16,8 +16,8 @@ const initialState = {
     fetchingManagerError: null,
     updatingManagerDetails: false,
     updatingManagerDetailsError: null,
-    fetchingCompany: false,
-    fetchingCompanyError: null,
+    fetchingCompanyDetails: false,
+    fetchCompanyDetailsError: null,
     fetchingProvider: false,
     fetchingProviderError: null,
     fetchingOwner: false,
@@ -164,6 +164,33 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 fetchingProfile: false,
                 fetchProfileError: action.payload,
+            }
+        }
+
+        case profileActionTypes.FETCH_COMPANY_DETAILS_START: {
+            return {
+                ...state,
+                fetchingCompanyDetails: true,
+                fetchCompanyDetailsError: null,
+            }
+        }
+        case profileActionTypes.FETCH_COMPANY_DETAILS_SUCCESS: {
+            const companies = {
+                ...state.companyDetails,
+                ...action.payload,
+            };
+            return {
+                ...state,
+                companyDetails: companies,
+                fetchingCompanyDetails: false,
+                fetchCompanyDetailsError: null,
+            }
+        }
+        case profileActionTypes.FETCH_COMPANY_DETAILS_FAILURE: {
+            return {
+                ...state,
+                fetchingCompanyDetails: false,
+                fetchCompanyDetailsError: action.payload,
             }
         }
         

@@ -5,17 +5,22 @@ import { fetchDeliveries } from '../redux/actions/delivery';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchLocations } from '../redux/actions/location';
+import { fetchStats } from '../redux/actions/profile';
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
   const { delivery } = useSelector(state => state.deliveryReducer);
+  const providerId = useSelector(state => state.profileReducer.providerDetails.id);
   const [completed, setcompleted] = useState(0);
   const [processing, setprocessing] = useState(0);
   const [started, setstarted] = useState(0);
   const [revenue, setrevenue] = useState(0);
+  const [stats, setStats] = useState({});
+
 
   useEffect(() => {
     dispatch(fetchDeliveries());
+    setStats(fetchStats(providerId));
     delivery.map(item=> {
       setrevenue(revenue+parseInt(item.cost));
       if (item.status == "processing"){
@@ -226,7 +231,7 @@ export const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {delivery.map((item)=> (
+                      {delivery.filter(item => item.status !== "completed").map((item)=> (
                         <tr>
                         <td>{formatAMPM(item.createdAt)}</td>
                         <td>{item.pickupArea}</td>
@@ -234,8 +239,7 @@ export const Dashboard = () => {
                         <td>{item.size}</td>
                         <td>
                           {item.status === "started" && <div className="badge badge-info">{item.status}</div>}
-                          {item.status === "completed" && <div className="badge badge-success">{item.status}</div>}
-                          {item.status === "processing" && <div className="badge badge-default">{item.status}</div>}
+                          {item.status === "processing" && <div className="badge badge-primary">{item.status}</div>}
                         </td>
                         <td style={{
                                                     display: 'flex',

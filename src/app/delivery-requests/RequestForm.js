@@ -165,7 +165,7 @@ export function RequestForm() {
                         <div className='row'>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Priority : </label>
-                                <div className={`badge badge-${requests?.priority == 'high' ? 'warning' : 'primary'}`}>{requests?.priority}</div>
+                                <div className={`badge badge-${requests?.priority === 'high' ? 'warning' : 'primary'}`}>{requests?.priority}</div>
                             </div>
                             <div className='col-sm-2'>
                                 <label className='mr-3 text-info'>Size : </label>
@@ -184,6 +184,24 @@ export function RequestForm() {
                                 <label className='col-sm-2 text-info'>Assigned Agent : </label>
                                 <label className='col-sm-10'>{assignedAgent.lastName+" "+assignedAgent.firstName}</label>
                         </div>
+                    </div>
+                </div>
+                <div className='row mt-5'>
+                    <div className="col-12 grid margin">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className='card-title'>
+                                        <h4 className="card-description">Delivery Images</h4>
+                                    </div>
+                                    <div className="row">
+                                            {requests?.DeliveryImages?.map((image, index) => (
+                                                <div className='col-sm-4' key={index}>
+                                                    <img src={image?.link} alt="" height="250" width="250" />
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
                 <div className="row mt-5">

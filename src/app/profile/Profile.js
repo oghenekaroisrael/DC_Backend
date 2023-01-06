@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchProfile, getIdentificationDetails, getInsuranceDetails, getManagerDetails, getOwnerDetails, getPricing, updateCompanyDetails, updateIdentificationDetails, updateInsuranceDetails, updateManagerDetails, updateOwnerDetails, updatePricing } from '../redux/actions/profile';
+import { fetchProfile, getCompanyDetails, getIdentificationDetails, getInsuranceDetails, getManagerDetails, getOwnerDetails, getPricing, updateCompanyDetails, updateIdentificationDetails, updateInsuranceDetails, updateManagerDetails, updateOwnerDetails, updatePricing } from '../redux/actions/profile';
 
 import identificationMethods from '../data/identification-methods';
 import banks from '../data/banks';
@@ -18,7 +18,7 @@ export function Profile(props) {
     const reduxIdentificationDetails = useSelector(state => state.profileReducer.identification);
     const reduxInsuranceDetails = useSelector(state => state.profileReducer.insuranceDetails);
     const reduxPricing = useSelector(state => state.profileReducer.pricingPreference);
-    const key = 'sk_test_f0ceeebbc0541de58d6bf05fe0959da518520043';
+    const key = process.env.REACT_APP_PAYSTACK_KEY;
 
     const [companyDetails, setCompanyDetails] = useState({});
     const [ownerDetails, setOwnerDetails] = useState({});
@@ -38,14 +38,16 @@ export function Profile(props) {
 
     useEffect(() => {
         dispatch(fetchProfile());
-        dispatch(getOwnerDetails());
-        dispatch(getManagerDetails());
-        dispatch(getIdentificationDetails());
-        dispatch(getInsuranceDetails());
-        dispatch(getPricing());
+        dispatch(getOwnerDetails(providerDetails?.id));
+        dispatch(getManagerDetails(providerDetails?.id));
+        dispatch(getIdentificationDetails(providerDetails?.id));
+        dispatch(getInsuranceDetails(providerDetails?.id));
+        dispatch(getPricing(providerDetails?.id));
+        dispatch(getCompanyDetails(providerDetails?.id));
 
         setOwnerDetails(reduxOwnerDetails);
         setManagerDetails(reduxManagerDetails);
+        setCompanyDetails(reduxCompanyDetails);
         setIdentificationDetails(reduxIdentificationDetails);
         setInsuranceDetails(reduxInsuranceDetails);
         setPricing(reduxPricing);
@@ -58,7 +60,6 @@ export function Profile(props) {
                     return res.json();
                 } else {
                     console.log("Oops. An Error Occured");
-                    // alert("Oops. An Error Occured")
                 }
             })
             .then(data => {
@@ -71,7 +72,6 @@ export function Profile(props) {
                 return res.json();
             } else {
                     console.log("Oops. An Error Occured");
-                    // alert("Oops. An Error Occured");
             }
         }).then(data => {
             console.log(data.payload.subaccount_code);
@@ -99,7 +99,6 @@ export function Profile(props) {
         });
         }).catch(err => {
                     console.log("Oops. An Error Occured", err);
-                    // alert("Oops. An Error Occured");
         });
         }
         fetchbanks();
@@ -157,9 +156,9 @@ export function Profile(props) {
         });
     }
 
-    useEffect(() => {
-      alert(JSON.stringify(pricing));
-    }, [pricing]);
+    // useEffect(() => {
+    // //   alert(JSON.stringify(pricing));
+    // }, [pricing]);
     
 
     const handleUpdateCompanyDetails = () => {
@@ -184,7 +183,6 @@ export function Profile(props) {
 
             } else {
                     console.log("Oops. An Error Occured");
-                    // alert("Oops. An Error Occured");
             }
         }).then(data => {
             fetch(endpoints.API_HOME + '/providers/bank/details', {
@@ -195,16 +193,13 @@ export function Profile(props) {
                 if (res.status === 200) {
                     window.location.reload();
                 } else {
-                    // alert("Oops. An Error Occured");
                     console.log("Oops. An Error Occured");
                 }
             }).catch(err => {
-                // alert("Oops. An Error Occured");
                 console.log("Oops. An Error Occured");
             });
         }).catch(err => {
                     console.log("Oops. An Error Occured");
-                    // alert("Oops. An Error Occured");
         });
     }
 
@@ -274,7 +269,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Company Name</label>
+                                            <label className="col-sm-3 col-form-label">Company Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control type="text" value={user.name} className="bg-dark" readOnly />
                                             </div>
@@ -282,7 +277,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Phone Number</label>
+                                            <label className="col-sm-3 col-form-label">Phone Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="phoneNumber" defaultValue={companyDetails.phoneNumber} onChange={handleInputCompany} type="tel" placeholder="+234" />
                                             </div>
@@ -292,7 +287,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Email</label>
+                                            <label className="col-sm-3 col-form-label">Email <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control type="email" value={user.email} className="bg-dark" readOnly />
                                             </div>
@@ -300,7 +295,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Website</label>
+                                            <label className="col-sm-3 col-form-label">Website <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control
                                                     name="website" defaultValue={companyDetails.website} onChange={handleInputCompany}
@@ -315,7 +310,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">CAC Number</label>
+                                            <label className="col-sm-3 col-form-label">CAC Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="cac_no" defaultValue={companyDetails.cac_no} onChange={handleInputCompany} type="text" placeholder="" />
                                             </div>
@@ -323,7 +318,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">VAT Number</label>
+                                            <label className="col-sm-3 col-form-label">VAT Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="vat_no" defaultValue={companyDetails.vat_no} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -333,7 +328,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">TIN Number</label>
+                                            <label className="col-sm-3 col-form-label">TIN Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="tin_no" defaultValue={companyDetails.tin_no} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -344,7 +339,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Address 1</label>
+                                            <label className="col-sm-3 col-form-label">Address 1 <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="address_1" defaultValue={companyDetails.address_1} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -352,7 +347,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">State</label>
+                                            <label className="col-sm-3 col-form-label">State <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="state" defaultValue={companyDetails.state} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -362,7 +357,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Address 2</label>
+                                            <label className="col-sm-3 col-form-label">Address 2 <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="address_2" defaultValue={companyDetails.address_2} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -370,7 +365,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Postcode</label>
+                                            <label className="col-sm-3 col-form-label">Postcode <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="post_code" defaultValue={companyDetails.post_code} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -380,7 +375,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">City</label>
+                                            <label className="col-sm-3 col-form-label">City <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="city" defaultValue={companyDetails.city} onChange={handleInputCompany} type="text" />
                                             </div>
@@ -388,7 +383,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Country</label>
+                                            <label className="col-sm-3 col-form-label">Country <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <select name="country" defaultValue={companyDetails.country} onChange={handleInputCompany} className="form-control">
                                                     <option>Nigeria</option>
@@ -414,7 +409,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">First Name</label>
+                                            <label className="col-sm-3 col-form-label">First Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="firstName" value={ownerDetails?.firstName} onChange={handleInputOwner} type="text" />
                                             </div>
@@ -422,7 +417,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Phone Number</label>
+                                            <label className="col-sm-3 col-form-label">Phone Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="phoneNumber" value={ownerDetails?.phoneNumber} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
@@ -432,7 +427,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Last Name</label>
+                                            <label className="col-sm-3 col-form-label">Last Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="lastName" value={ownerDetails?.lastName} onChange={handleInputOwner} type="text" />
                                             </div>
@@ -440,7 +435,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Phone Number 2</label>
+                                            <label className="col-sm-3 col-form-label">Phone Number 2 <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="phoneNumber2" value={ownerDetails?.phoneNumber2} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
@@ -450,7 +445,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Other Name</label>
+                                            <label className="col-sm-3 col-form-label">Other Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="middleName" value={ownerDetails?.middleName} onChange={handleInputOwner} type="text" placeholder="Olamide" />
                                             </div>
@@ -458,7 +453,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Whatsapp</label>
+                                            <label className="col-sm-3 col-form-label">Whatsapp <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="whatsapp" value={ownerDetails?.whatsapp} onChange={handleInputOwner} type="tel" placeholder="+234" />
                                             </div>
@@ -468,7 +463,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Email</label>
+                                            <label className="col-sm-3 col-form-label">Email <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="email" value={ownerDetails?.email} onChange={handleInputOwner} type="email" placeholder="johndoe@gmail.com" />
                                             </div>
@@ -476,7 +471,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Address</label>
+                                            <label className="col-sm-3 col-form-label">Address <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="address" value={ownerDetails?.address} onChange={handleInputOwner} type="text" />
                                             </div>
@@ -500,7 +495,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">First Name</label>
+                                            <label className="col-sm-3 col-form-label">First Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="firstName" defaultValue={managerDetails?.firstName} onChange={handleInputManager} type="text" />
                                             </div>
@@ -508,7 +503,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Phone Number</label>
+                                            <label className="col-sm-3 col-form-label">Phone Number <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="phoneNumber" defaultValue={managerDetails?.phoneNumber} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
@@ -518,7 +513,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Last Name</label>
+                                            <label className="col-sm-3 col-form-label">Last Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="lastName" defaultValue={managerDetails?.lastName} onChange={handleInputManager} type="text" />
                                             </div>
@@ -526,7 +521,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Phone Number 2</label>
+                                            <label className="col-sm-3 col-form-label">Phone Number 2 <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="phoneNumber2" defaultValue={managerDetails?.phoneNumber2} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
@@ -536,7 +531,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Other Name</label>
+                                            <label className="col-sm-3 col-form-label">Other Name <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="middleName" defaultValue={managerDetails?.middleName} onChange={handleInputManager} type="text" placeholder="Olamide" />
                                             </div>
@@ -544,7 +539,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Whatsapp</label>
+                                            <label className="col-sm-3 col-form-label">Whatsapp <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="whatsapp" defaultValue={managerDetails?.whatsapp} onChange={handleInputManager} type="tel" placeholder="+234" />
                                             </div>
@@ -554,7 +549,7 @@ export function Profile(props) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Email</label>
+                                            <label className="col-sm-3 col-form-label">Email <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="email" defaultValue={managerDetails?.email} onChange={handleInputManager} type="email" placeholder="john.doe@gmail.com" />
                                             </div>
@@ -562,7 +557,7 @@ export function Profile(props) {
                                     </div>
                                     <div className="col-md-6">
                                         <Form.Group className="row">
-                                            <label className="col-sm-3 col-form-label">Address</label>
+                                            <label className="col-sm-3 col-form-label">Address <span style={{color: 'red'}}>*</span></label>
                                             <div className="col-sm-9">
                                                 <Form.Control name="address" defaultValue={managerDetails?.address} onChange={handleInputManager} type="text" />
                                             </div>
@@ -584,7 +579,7 @@ export function Profile(props) {
                             <p className="card-description"> Show us some ID </p>
                             <form className="forms-sample">
                                 <Form.Group>
-                                    <label htmlFor="selectIDMethod">Means of Identification</label>
+                                    <label htmlFor="selectIDMethod">Means of Identification </label>
                                     <select key={`id-method-${String(identificationDetails?.type)?.replace(" ","-")}`} name="type" defaultValue={identificationDetails?.type} onChange={handleInputIdentification} className="form-control" id="selectIDMethod">
                                         {/* <option value="">None</option> */}
                                         {identificationMethods.map((option) => (
@@ -593,22 +588,22 @@ export function Profile(props) {
                                     </select>
                                 </Form.Group>
                                 <Form.Group>
-                                    <label>Identification Number</label>
+                                    <label>Identification Number <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="identificationNumber" defaultValue={identificationDetails?.identificationNumber} onChange={handleInputIdentification} type="text" className="form-control" />
                                 </Form.Group>
                                 <Form.Group>
-                                    <label>Upload an image of your ID</label>
+                                    <label>Upload an image of your ID <span style={{color: 'red'}}>*</span></label>
                                     <div className="custom-file">
                                         <Form.Control name="idImageUrl" defaultValue={identificationDetails?.id_image_url} onChange={handleInputIdentification} type="file" className="form-control visibility-hidden" id="customFileLang" lang="es" />
                                         <label className="custom-file-label" htmlFor="customFileLang">Upload ID</label>
                                     </div>
                                 </Form.Group>
                                 <Form.Group>
-                                    <label>Issue Date</label>
+                                    <label>Issue Date <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="issueDate" defaultValue={formatDate(identificationDetails?.issueDate)} onChange={handleInputIdentification} type="date" className="form-control" />
                                 </Form.Group>
                                 <Form.Group>
-                                    <label>Expire Date</label>
+                                    <label>Expire Date <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="expiryDate" defaultValue={formatDate(identificationDetails?.expiryDate)} onChange={handleInputIdentification} type="date" className="form-control" />
                                 </Form.Group>
                                 <div className="mt-4">
@@ -625,7 +620,7 @@ export function Profile(props) {
                             <p className="card-description">Please ensure the information you provide is accurate.</p>
                             <form className="forms-sample">
                                 <Form.Group>
-                                    <label htmlFor="selectBank">Bank Name</label>
+                                    <label htmlFor="selectBank">Bank Name <span style={{color: 'red'}}>*</span></label>
                                     <select key={`bank-name-${companyDetails.bank_name}`} name="bank_code" defaultValue={currentBankDetail?.settlement_bank} onChange={handleInputBankDetails} className="form-control" id="selectBank">
                                         {/* <option value="">None</option> */}
                                         {banks.map((option) => (
@@ -634,15 +629,15 @@ export function Profile(props) {
                                     </select>
                                 </Form.Group>
                                 <Form.Group>
-                                    <label className="col-form-label">Account Name</label>
+                                    <label className="col-form-label">Account Name <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="business_name" defaultValue={currentBankDetail?.business_name} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
-                                    <label className="col-form-label">Account Number</label>
+                                    <label className="col-form-label">Account Number <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="account_number" defaultValue={currentBankDetail?.account_number} onChange={handleInputBankDetails} type="text" />
                                 </Form.Group>
                                 <Form.Group>
-                                    <label htmlFor="selectDepositFrequency">Frequency of deposit </label>
+                                    <label htmlFor="selectDepositFrequency">Frequency of deposit <span style={{color: 'red'}}>*</span></label>
                                     <select name="settlement_schedule" defaultValue={currentBankDetail?.settlement_schedule} onChange={handleInputBankDetails} className="form-control" id="selectDepositFrequency">
                                         {/* <option value="">None</option> */}
                                         {["AUTO", "daily", "weekly"].map((option) => (
@@ -664,11 +659,11 @@ export function Profile(props) {
                             <p className="card-description">If you don't have Goods-In-Transit insurance, kindly visit www.yyy.com and provide your insurance policy upon completion.</p>
                             <form className="forms-sample">
                                 <Form.Group>
-                                    <label className="col-form-label">Goods-In-Transit Insurance Name</label>
+                                    <label className="col-form-label">Goods-In-Transit Insurance Name <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="goodsInTransitInsuranceName" defaultValue={insuranceDetails?.goodsInTransitInsuranceName} onChange={handleInputInsurance} type="text" />
                                 </Form.Group>
                                 <Form.Group>
-                                    <label className="col-form-label">Goods-In-Transit Insurance Phone Number</label>
+                                    <label className="col-form-label">Goods-In-Transit Insurance Phone Number <span style={{color: 'red'}}>*</span></label>
                                     <Form.Control name="goodsInTransitPhoneNumber" defaultValue={insuranceDetails?.goodsInTransitPhoneNumber} onChange={handleInputInsurance} type="text" />
                                 </Form.Group>
                                 <div className="mt-4">
@@ -699,7 +694,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="chargeFlatRate" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} defaultChecked={!pricing?.chargeFlatRate} id="flatRateRadio2" /> No
+                                                        <input type="radio" className="form-check-input" name="chargeFlatRate" defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} defaultChecked={!pricing?.chargeFlatRate} id="flatRateRadio2" /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -712,7 +707,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="chargeByWeight" value={true} defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio1"  defaultChecked={pricing?.chargeByWeight} /> Yes
+                                                        <input type="radio" className="form-check-input" name="chargeByWeight" defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio1"  defaultChecked={pricing?.chargeByWeight} /> Yes
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -720,7 +715,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="chargeByWeight" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio2"  defaultChecked={!pricing?.chargeByWeight} /> No
+                                                        <input type="radio" className="form-check-input" name="chargeByWeight" defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="weightRadio2"  defaultChecked={!pricing?.chargeByWeight} /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -733,7 +728,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="chargeByDistance" value={true} defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio1" defaultChecked={pricing?.chargeByDistance} /> Yes
+                                                        <input type="radio" className="form-check-input" name="chargeByDistance" defaultValue={pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio1" defaultChecked={pricing?.chargeByDistance} /> Yes
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>
@@ -741,7 +736,7 @@ export function Profile(props) {
                                             <div>
                                                 <div className="form-check">
                                                     <label className="form-check-label">
-                                                        <input type="radio" className="form-check-input" name="chargeByDistance" value={false} defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio2" defaultChecked={!pricing?.chargeByDistance} /> No
+                                                        <input type="radio" className="form-check-input" name="chargeByDistance" defaultValue={!pricing?.chargeFlatRate} onChange={(e)=>handleInputPricing(e.target.name, e.target.value)} id="distanceRadio2" defaultChecked={!pricing?.chargeByDistance} /> No
                                                         <i className="input-helper"></i>
                                                     </label>
                                                 </div>

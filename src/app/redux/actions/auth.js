@@ -113,7 +113,8 @@ export const registerUser = (credentials) => dispatch => {
         headers: getHeaders(),
         body: JSON.stringify({
             ...credentials,
-            role: "provider"
+            role: "provider",
+            status: "pending"
         })
     })
         .then(res => {

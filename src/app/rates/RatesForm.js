@@ -1,21 +1,22 @@
-import "react-select/dist/react-select.css";
-import "react-virtualized-select/styles.css";
 import React, { useState, useEffect } from 'react';
-import Select from "react-virtualized-select";
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-
+import { InputLabel, Select, MenuItem, Alert } from '@mui/material';
 import { createFare } from '../redux/actions/profile';
 import { fetchLocations } from '../redux/actions/location';
+import AsyncSelect from 'react-select/async';
+import { endpoints, getHeaders } from '../redux/helpers/api';
 
-
-import locations from '../data/places';
 
 export function RatesForm() {
     const dispatch = useDispatch();
     const history = useHistory();
     const [places, setPlaces] = useState([]);
+    const [selectedFromOption, setSelectedFromOption] = useState(null);
+    const [selectedToOption, setSelectedToOption] = useState(null);
+    const [normalFromSelectOption, setNormalFromSelectOption] = useState([]);
+    const [normalToSelectOption, setNormalToSelectOption] = useState([]);
     const { locations } = useSelector(state => state.locationReducer);
 
     const [formData, setFormData] = useState({
@@ -24,22 +25,69 @@ export function RatesForm() {
         size: "",
         cost: "",
     });
-
-    useEffect(() => {
-        let listPlaces = [];
-    
-        for (let i = 0; i < locations?.length; i++) {
-            listPlaces.push({
-                label: locations[i].name+" "+locations[i].city,
-                value: locations[i].id,
-            });
+    const customStyles = {
+        control: (base, state) => ({
+          ...base,
+          // Overwrittes the different states of border
+          borderColor: state.isFocused ? "yellow" : "green",
+          // Removes weird border around container
+          boxShadow: state.isFocused ? null : null,
+          "&:hover": {
+            // Overwrittes the different states of border
+            borderColor: state.isFocused ? "red" : "blue"
+          }
+        }),
+        option: (styles) => {
+           return { ...styles,
+            color: '#000',
+           };
         }
-        
-        setPlaces(listPlaces);
-        
-        console.log(places);
+      };
 
-    }, []);
+    const searchLocation = (inputData, callback) => {
+        fetch(endpoints.API_HOME + `/locations/search?search=${inputData}&page=1&limit=20`, {
+            headers: getHeaders(true)
+        })
+            .then (res => {
+                if (res.status === 200) {
+                    return res.json();
+                } else {
+                    alert("Oops. An Error Occured");
+                }
+            })
+            .then (data => {
+                const tempPlaces = [];
+                data?.payload?.forEach((element) => {
+                    tempPlaces.push({
+                      label: `${element.name}`,
+                      value: element.id,
+                    });
+                  });
+                callback(tempPlaces);
+            }).catch(err => {
+                alert("Oops. An Error Occured");
+            })
+    }
+
+    const onFromSearchChange = (selectedOption) => {
+        if (selectedOption) {
+          setSelectedFromOption(selectedOption);
+          setFormData({ ...formData, origin: selectedOption.label });
+        }
+      };
+    const handleFromChange = (normalSelectOption) => {
+        setNormalFromSelectOption(normalSelectOption);
+    };
+
+    const onToSearchChange = (selectedOption) => {
+        if (selectedOption) {
+          setSelectedToOption(selectedOption);
+          setFormData({ ...formData, destination: selectedOption.label });
+        }
+      };
+    const handleToChange = (normalSelectOption) => {
+        setNormalToSelectOption(normalSelectOption);
+    };
     
 
     const handleInput = (e) => {
@@ -47,6 +95,7 @@ export function RatesForm() {
     }
 
     const handleSubmit = () => {
+        console.log(formData);
         if (formData.origin && formData.destination && formData.size && formData.cost) {
             dispatch(createFare(formData));
             history.push("/rates")
@@ -77,28 +126,31 @@ export function RatesForm() {
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label">Origin</label>
                                         <div className="col-sm-9">
-                                            {/* <select name="origin" value={formData.origin} onChange={handleInput} className="form-control">
-                                                <option value=""> Choose a location </option>
-                                                {places.map(place => (<option>{place}</option>))}
-                                            </select> */}
-                                            <Select
-                                            name="origin"
-                                            className="form-control"
-                                            options={places}
-                                            onChange={opt => console.log(opt.label, opt.value)}
+                                            <AsyncSelect
+                                                value={selectedFromOption}
+                                                loadOptions={searchLocation}
+                                                placeholder="Origin"
+                                                name={'origin'}
+                                                onChange={onFromSearchChange}
+                                                styles={customStyles}
+                                                defaultOptions={true}
                                             />
                                         </div>
                                     </Form.Group>
                                 </div>
-
                                 <div className="col-md-8">
                                     <Form.Group className="row">
                                         <label className="col-sm-3 col-form-label"> Destination </label>
                                         <div className="col-sm-9">
-                                            {/* <select name="destination" value={formData.destination} onChange={handleInput} className="form-control">
-                                                <option value=""> Choose a location </option>
-                                                {places.map(place => (<option>{place}</option>))}
-                                            </select> */}
+                                            <AsyncSelect
+                                                value={selectedToOption}
+                                                loadOptions={searchLocation}
+                                                placeholder="Destination"
+                                                name={'destination'}
+                                                onChange={onToSearchChange}
+                                                styles={customStyles}
+                                                defaultOptions={true}
+                                            />
                                         </div>
                                     </Form.Group>
                                 </div>

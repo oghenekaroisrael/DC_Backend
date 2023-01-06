@@ -44,7 +44,7 @@ export function AgentForm(props) {
         id_image_url: "",
         issue_date: "",
         expire_date: "",
-        role: "DELIVERY AGENT",
+        role: "agent",
         // photo_url: "",
     });
 
